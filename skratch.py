@@ -1,12 +1,17 @@
-import fibheap
+from heapdict import heapdict
 
-heap1 = fibheap.makefheap()
+from Entities.Node import Node
 
-num_list1 = [1,4,2]
+hd = heapdict()
 
-for num in num_list1:
-    fibheap.fheappush(heap1, num)
+node1 = Node(1, 2, 3, None, 4, 10, None, 5)
+node2 = Node(1, 3, 4, None, 6, 20, None, 5)
+node3 = Node(51, 123, 34, None, 76, 30, None, 35)
 
-heap1.delete(4)
+hd[node2] = node2.pathCostWithHeuristic
+hd[node1] = node1.pathCostWithHeuristic
+hd[node3] = node3.pathCostWithHeuristic
+
+hd[node1] = None
+(obj, priority) = hd.popitem()
 pass
-# fuck fibonacci
