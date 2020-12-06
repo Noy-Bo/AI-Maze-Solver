@@ -4,7 +4,7 @@ import fibheap
 
 from DataStructures.PriorityQueue import PriorityQueue
 from Entities.Node import Node
-from Heuristics.Heuristics import diagonalHeuristic
+from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
 
 
@@ -17,6 +17,7 @@ from Utilities import getCoordsFromDirection, evaluateStats
 
 heuristicCounter = 0
 heuristicSum = 0
+ticToc = 0
 
 def Astar (maze,startPoint):
     # initialization
@@ -33,7 +34,11 @@ def Astar (maze,startPoint):
     frontierHashTable = {}
     exploredHashTable = {}
 
-    maxRuntime = 60  # seconds
+    maxRuntime = 60*60  # seconds
+
+    # calculating heuristic to first node
+    startPoint.heuristicCost = diagonalHeuristic(startPoint.x,startPoint.y,maze.goalNode)
+    startPoint.pathCostWithHeuristic = startPoint.pathCost + startPoint.heuristicCost
 
     # inserting first node
     frontierPriorityQueue.push(startPoint)
@@ -52,11 +57,13 @@ def Astar (maze,startPoint):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
+            print("time wasted on o(n) is: {}".format(ticToc))
             evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,'Diagonal', (heuristicSum/heuristicCounter))
             return True
 
+        if node.key not in exploredHashTable:
+            exploredCounter += 1
         exploredHashTable[node.key] = node
-        exploredCounter += 1
         expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable)
 
     # time's up!
@@ -70,15 +77,17 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
     global heuristicSum
     global heuristicCounter
+    global ticToc #test
 
     # the expansion order is like so
     for direction in ['RU','R','RD','D','LD','L','RU','U']:
 
         x,y = getCoordsFromDirection(direction, node.x, node.y)
         if maze.isValidMove(x,y):
-            nodeCost = maze.getCost(x, y)
+            newNodeCost = maze.getCost(x, y)
             heuristicValue = diagonalHeuristic(x,y,maze.goalNode)
-            newNode = Node(x,y,nodeCost,node,node.pathCost + nodeCost,node.pathCost + nodeCost + heuristicValue,node.depth+1)
+            newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
+
             heuristicSum += heuristicValue
             heuristicCounter += 1
 
@@ -87,8 +96,47 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                 frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
 
-            # incase we already seen this node but with higher path cost.
-            elif newNode.key in frontierHashTable and newNode.pathCost < frontierHashTable[newNode.key].pathCost:
-                frontierHashTable[newNode.key] = newNode
+            # node is in frontier
+            elif newNode.key in frontierHashTable:
+                if newNode.pathCostWithHeuristic < frontierHashTable[newNode.key].pathCostWithHeuristic or (newNode.pathCostWithHeuristic == frontierHashTable[newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost):
+                    tmp = time.time()
+                    frontierPriorityQueue.removeSpecific(newNode.x,newNode.y)  # this is o(n), need to think of a better way to do it
+                    ticToc += time.time() - tmp
+                    frontierPriorityQueue.push(newNode)
+                    frontierHashTable[newNode.key] = newNode
+
+            # node in explored and not in frontier
+            elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:
+                if newNode.pathCostWithHeuristic < exploredHashTable[newNode.key].pathCostWithHeuristic or ( newNode.pathCostWithHeuristic == exploredHashTable[newNode.key].pathCostWithHeuristic and newNode.heuristicCost < exploredHashTable[newNode.key].heuristicCost):
+                    frontierPriorityQueue.push(newNode)
+                    frontierHashTable[newNode.key] = newNode
+                    #remove from explored????
+
+            # # incase we already seen this node but with higher pathcost \\ incase we seen this node with same pathcost but higher heuristic value
+            # elif newNode.pathCostWithHeuristic < frontierHashTable[newNode.key].pathCostWithHeuristic or newNode.pathCostWithHeuristic == frontierHashTable[newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost:
+            #     print("changing node x:{}, y:{}, cost:{}".format(newNode.x,newNode.y,newNode.cost))
+            #     print("old pathcost:{}, old heuristic:{}, old H+P:{}".format(frontierHashTable[newNode.key].pathCost,frontierHashTable[newNode.key].heuristicCost,frontierHashTable[newNode.key].pathCostWithHeuristic))
+            #     print("new pathcost:{}, new heuristic:{}, new H+P:{}".format(newNode.pathCost,newNode.heuristicCost,newNode.pathCostWithHeuristic))
+            #     if newNode.x == newNode.fatherNode.x and newNode.y == newNode.fatherNode.y:
+            #         print("maydaymayday!")
+            #     frontierPriorityQueue.removeSpecific(newNode.x,newNode.y) # this is o(n), need to think of a better way to do it
+            #     frontierPriorityQueue.push(newNode)
+            #     frontierHashTable[newNode.key] = newNode
 
 
+            # elif newNode.key in frontierHashTable and (newNode.pathCost < frontierHashTable[newNode.key].pathCost \
+            #         or newNode.pathCost == frontierHashTable[newNode.key].pathCost and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost):
+            #     print("changing node x:{}, y:{}, cost:{}".format(newNode.x,newNode.y,newNode.cost))
+            #     print("old pathcost:{}, old heuristic:{}, old H+P:{}".format(frontierHashTable[newNode.key].pathCost,frontierHashTable[newNode.key].heuristicCost,frontierHashTable[newNode.key].pathCostWithHeuristic))
+            #     print("new pathcost:{}, new heuristic:{}, new H+P:{}".format(newNode.pathCost,newNode.heuristicCost,newNode.pathCostWithHeuristic))
+            #     frontierPriorityQueue.removeSpecific(newNode.x,newNode.y) # this is o(n), need to think of a better way to do it
+            #     frontierPriorityQueue.push(newNode)
+            #     frontierHashTable[newNode.key] = newNode
+
+
+
+            #
+            # if node.heuristicCost > 1240-node.pathCost:
+            #     pass
+            # if newNode.heuristicCost > 1240-newNode.pathCost:
+            #     pass
