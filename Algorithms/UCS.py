@@ -80,6 +80,9 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
             # incase we already seen this node but with higher path cost.
             elif newNode.key in frontierHashTable and newNode.pathCost < frontierHashTable[newNode.key].pathCost:
+                #frontierHashTable[newNode.key] = newNode
+                frontierPriorityQueue.removeSpecific(newNode.x,newNode.y)  # this is o(n), need to think of a better way to do it
+                frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
 
 

@@ -13,7 +13,7 @@ class Maze(object):
         return self.maze[x][y]
 
     def isGoal(self,node):
-        return node.key == self.goalNode.key
+        return (node.x,node.y) == (self.goalNode.x,self.goalNode.y)
 
     def isValidMove(self,x,y):
         if x < 0 or y < 0 or y > (self.size - 1) or x > (self.size - 1) or self.getCost(x,y) < 0:
