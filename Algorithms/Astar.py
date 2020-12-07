@@ -17,7 +17,7 @@ from Utilities import getCoordsFromDirection, evaluateStats
 
 heuristicCounter = 0
 heuristicSum = 0
-ticToc = 0
+#ticToc = 0
 
 def Astar (maze,startPoint):
     # initialization
@@ -57,7 +57,6 @@ def Astar (maze,startPoint):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
-            print("time wasted on o(n) is: {}".format(ticToc))
             evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,'Diagonal', (heuristicSum/heuristicCounter))
             return True
 
@@ -77,7 +76,6 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
     global heuristicSum
     global heuristicCounter
-    global ticToc #test
 
     # the expansion order is like so
     for direction in ['RU','R','RD','D','LD','L','RU','U']:
@@ -99,8 +97,8 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
             # node is in frontier
             elif newNode.key in frontierHashTable:
                 if newNode.pathCostWithHeuristic < frontierHashTable[newNode.key].pathCostWithHeuristic or (newNode.pathCostWithHeuristic == frontierHashTable[newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost):
-                    tmp = time.time()
-                    #update node
+
+                    #updating node
                     node = frontierHashTable[newNode.key]
                     node.fatherNode = newNode.fatherNode
                     node.pathCost = newNode.pathCost
@@ -108,9 +106,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     node.depth = newNode.depth
                     node.pathCostWithHeuristic = newNode.pathCostWithHeuristic
                     frontierPriorityQueue.decreaseKey(node,newNode.pathCostWithHeuristic)
-                    #frontierPriorityQueue.removeSpecific(newNode.x,newNode.y)  # this is o(n), need to think of a better way to do it
-                    ticToc += time.time() - tmp
-                    #frontierPriorityQueue.push(newNode)
+
                     frontierHashTable[newNode.key] = node
 
             # node in explored and not in frontier
@@ -120,18 +116,11 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     frontierHashTable[newNode.key] = newNode
                     #remove from explored????
 
-            # # incase we already seen this node but with higher pathcost \\ incase we seen this node with same pathcost but higher heuristic value
-            # elif newNode.pathCostWithHeuristic < frontierHashTable[newNode.key].pathCostWithHeuristic or newNode.pathCostWithHeuristic == frontierHashTable[newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost:
-            #     print("changing node x:{}, y:{}, cost:{}".format(newNode.x,newNode.y,newNode.cost))
-            #     print("old pathcost:{}, old heuristic:{}, old H+P:{}".format(frontierHashTable[newNode.key].pathCost,frontierHashTable[newNode.key].heuristicCost,frontierHashTable[newNode.key].pathCostWithHeuristic))
-            #     print("new pathcost:{}, new heuristic:{}, new H+P:{}".format(newNode.pathCost,newNode.heuristicCost,newNode.pathCostWithHeuristic))
-            #     if newNode.x == newNode.fatherNode.x and newNode.y == newNode.fatherNode.y:
-            #         print("maydaymayday!")
-            #     frontierPriorityQueue.removeSpecific(newNode.x,newNode.y) # this is o(n), need to think of a better way to do it
-            #     frontierPriorityQueue.push(newNode)
-            #     frontierHashTable[newNode.key] = newNode
 
 
+            
+
+            # old try
             # elif newNode.key in frontierHashTable and (newNode.pathCost < frontierHashTable[newNode.key].pathCost \
             #         or newNode.pathCost == frontierHashTable[newNode.key].pathCost and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost):
             #     print("changing node x:{}, y:{}, cost:{}".format(newNode.x,newNode.y,newNode.cost))
@@ -141,10 +130,3 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
             #     frontierPriorityQueue.push(newNode)
             #     frontierHashTable[newNode.key] = newNode
 
-
-
-            #
-            # if node.heuristicCost > 1240-node.pathCost:
-            #     pass
-            # if newNode.heuristicCost > 1240-newNode.pathCost:
-            #     pass
