@@ -28,7 +28,7 @@ def readInstance(fileName):
     splitGP[1] = int(splitGP[1])
     goalNode = Node(splitGP[0],splitGP[1],maze[splitGP[0]][splitGP[1]])
     startNode = Node(splitSP[0],splitSP[1],maze[splitSP[0]][splitSP[1]],None,maze[splitSP[0]][splitSP[1]],None,0)
-    maze = Maze(maze, mazeSize, goalNode)
+    maze = Maze(maze, mazeSize, goalNode,startNode)
 
     return algorithmName,startNode,goalNode,mazeSize,maze
 
@@ -73,16 +73,23 @@ def getDirectionFromCoords(currX,currY,fatherX,fatherY):
         return 'RU'
     return 'ERROR'
 
-def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,exploredCounter,runTime,isHeuristic,heuristicName = None,heuristicAvg = None):
+def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,exploredCounter,runTime,isHeuristic
+                  ,heuristicName = None,heuristicAvg = None,backwardsNode=None,backwardsFrontierPriorityQueue=None):
 
     # stats calculation
 
     optimalSolutionCost = solutionNode.pathCost
+    # BiAstar
+    if backwardsNode is not None:
+        optimalSolutionCost += backwardsNode.pathCost - solutionNode.cost
+
     moves = [] # stack
     movesString = ''
     solutionDepth = 0
+    backwardsSolutionDepth = 0
     node = solutionNode
 
+    # regular
     while node.fatherNode is not None:
         direction = (getDirectionFromCoords(node.x, node.y, node.fatherNode.x, node.fatherNode.y))
         direction = direction[::-1]
@@ -93,11 +100,27 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
         movesString += moves.pop()
     movesString = movesString[1:]
 
+     #biAstar
+    if backwardsNode is not None:
+        #appending the backwards search
+        node = backwardsNode
+        while node.fatherNode is not None:
+            direction = (getDirectionFromCoords(node.fatherNode.x,node.fatherNode.y,  node.x, node.y ))
+            #direction = direction[::-1]
+            movesString += '-' + direction
+            backwardsSolutionDepth += 1
+            if node.y == maze.goalNode.y and node.x == maze.goalNode.x:
+                break
+            node = node.fatherNode
+
+    solutionDepth = max(backwardsSolutionDepth,solutionDepth) # this might need to be changed, maybe sum the 2 depths???
+
     EBF = exploredCounter**(1/solutionDepth)
 
     minDepth = None
     maxDepth = None
     sumDepth = 0
+    backwardsSumDepth = 0
     frontierCounter = len(frontierPriorityQueue.heap)
 
     for i in range(0,frontierCounter):
@@ -113,7 +136,28 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
             if node.depth > maxDepth:
                 maxDepth = node.depth
 
-    avgDepth = sumDepth / frontierCounter
+    # BiAstar
+    if backwardsNode is not None:
+        backwardsFrontierCounter = len(backwardsFrontierPriorityQueue.heap)
+        for i in range(0, backwardsFrontierCounter):
+            node = backwardsFrontierPriorityQueue.pop()
+            backwardsSumDepth += node.depth
+
+            if minDepth == None and maxDepth == None:
+                minDepth = node.depth
+                maxDepth = node.depth
+            else:
+                if node.depth < minDepth:
+                    minDepth = node.depth
+                if node.depth > maxDepth:
+                    maxDepth = node.depth
+
+        avgDepth = ((sumDepth / frontierCounter)  + (backwardsSumDepth  / backwardsFrontierCounter))/2
+
+    #regular case
+    else:
+        avgDepth = sumDepth / frontierCounter
+
 
 
 

@@ -1,28 +1,22 @@
 import time
-
-import fibheap
-import heapdict as heapdict
 from DataStructures.PriorityQueue import PriorityQueue
 from Entities.Node import Node
 from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
 
+# this was programmed using 'AI modern approach' pseudo code for Astar algorithm.
+#                      @@@@ Astar algorithm. @@@
+#      this algorithm is searching the path from start to goal by evaluating
+#      heuristic cost + actual cost. the solution is guaranteed to be optimal
 
-# this was programmed using 'AI modern approach' pseudo code for UCS algorithm.
-
-#                   DataStructures:
-# frontierHashTable - Hashtable, inorder to be able to 'find' in o(1)
-# explored - Hashtable to check if a node has already been visited; using python built-in dict with override hashFunction. (3.x python ver)
-# fibonacci heap - to check for the next node with least cost.
 
 heuristicCounter = 0
 heuristicSum = 0
-#ticToc = 0
 
 def Astar (maze,startPoint):
     # initialization
     isHeuristic = True
-    frontierCounter = 0
+
     exploredCounter = 0
 
     global heuristicSum
@@ -54,6 +48,7 @@ def Astar (maze,startPoint):
         node = frontierPriorityQueue.pop()
         frontierHashTable.pop(node.key)
 
+        # checking to see if we hit the solution
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
@@ -115,18 +110,3 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
                     #remove from explored????
-
-
-
-            
-
-            # old try
-            # elif newNode.key in frontierHashTable and (newNode.pathCost < frontierHashTable[newNode.key].pathCost \
-            #         or newNode.pathCost == frontierHashTable[newNode.key].pathCost and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost):
-            #     print("changing node x:{}, y:{}, cost:{}".format(newNode.x,newNode.y,newNode.cost))
-            #     print("old pathcost:{}, old heuristic:{}, old H+P:{}".format(frontierHashTable[newNode.key].pathCost,frontierHashTable[newNode.key].heuristicCost,frontierHashTable[newNode.key].pathCostWithHeuristic))
-            #     print("new pathcost:{}, new heuristic:{}, new H+P:{}".format(newNode.pathCost,newNode.heuristicCost,newNode.pathCostWithHeuristic))
-            #     frontierPriorityQueue.removeSpecific(newNode.x,newNode.y) # this is o(n), need to think of a better way to do it
-            #     frontierPriorityQueue.push(newNode)
-            #     frontierHashTable[newNode.key] = newNode
-
