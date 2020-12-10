@@ -1,3 +1,8 @@
+import numpy as np
+
+from DataStructures.HeapDict import HeapDict
+from DataStructures.PriorityQueue import PriorityQueue
+from DataStructures.PriorityQueueDictionary import PriorityQueueDictionary
 from Entities.Maze import Maze
 from Entities.Node import Node
 
@@ -28,6 +33,8 @@ def readInstance(fileName):
     splitGP[1] = int(splitGP[1])
     goalNode = Node(splitGP[0],splitGP[1],maze[splitGP[0]][splitGP[1]])
     startNode = Node(splitSP[0],splitSP[1],maze[splitSP[0]][splitSP[1]],None,maze[splitSP[0]][splitSP[1]],None,0)
+    npArr = np.array(maze)
+    npArr = npArr.transpose()
     maze = Maze(maze, mazeSize, goalNode,startNode)
 
     return algorithmName,startNode,goalNode,mazeSize,maze
@@ -51,6 +58,7 @@ def getCoordsFromDirection(direction, x, y):
     if direction == 'U':
         return x,y-1
 
+    print("ERROR")
     return x,y
 
 def getDirectionFromCoords(currX,currY,fatherX,fatherY):
@@ -121,7 +129,14 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     maxDepth = None
     sumDepth = 0
     backwardsSumDepth = 0
-    frontierCounter = len(frontierPriorityQueue.heap)
+    if isinstance(frontierPriorityQueue,HeapDict) is True:
+        frontierCounter = len(frontierPriorityQueue.heap)
+    elif isinstance(frontierPriorityQueue,PriorityQueue) is True:
+        frontierCounter = frontierPriorityQueue.count
+    elif isinstance(frontierPriorityQueue,PriorityQueueDictionary) is True:
+        frontierCounter = frontierPriorityQueue.count
+    else:
+        frontierCounter = len(frontierPriorityQueue)
 
     for i in range(0,frontierCounter):
         node = frontierPriorityQueue.pop()

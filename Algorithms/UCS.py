@@ -2,7 +2,7 @@ import time
 
 import fibheap
 
-from DataStructures.PriorityQueue import PriorityQueue
+from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateStats
 
@@ -24,7 +24,7 @@ def UCS (maze,startPoint):
     frontierCounter = 0
     exploredCounter = 0
 
-    frontierPriorityQueue = PriorityQueue()
+    frontierPriorityQueue = HeapDict()
     frontierHashTable = {}
     exploredHashTable = {}
 
@@ -64,8 +64,8 @@ def UCS (maze,startPoint):
 # this functions receives a node and expand it in order to all direction, inserting the new expanded nodes into frontierPriorityQueue aswell.
 def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable):
 
-    # the expansion order is like so
-    for direction in ['RU','R','RD','D','LD','L','RU','U']:
+    # the expansion order is opposite because last element becomes first in the heap, thus it will expand in the right order
+    for direction in ['U', 'LU', 'L', 'LD', 'D', 'RD', 'R', 'RU']:
 
         x,y = getCoordsFromDirection(direction, node.x, node.y)
 
@@ -78,11 +78,11 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                 frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
 
-            # incase we already seen this node but with higher path cost.
-            elif newNode.key in frontierHashTable and newNode.pathCost < frontierHashTable[newNode.key].pathCost:
-                #frontierHashTable[newNode.key] = newNode
-                frontierPriorityQueue.removeSpecific(newNode.x,newNode.y)  # this is o(n), need to think of a better way to do it
-                frontierPriorityQueue.push(newNode)
-                frontierHashTable[newNode.key] = newNode
+            # # incase we already seen this node but with higher path cost.
+            # elif newNode.key in frontierHashTable and newNode.pathCost < frontierHashTable[newNode.key].pathCost:
+            #     #frontierHashTable[newNode.key] = newNode
+            #     frontierPriorityQueue.removeSpecific(newNode.x,newNode.y)  # this is o(n), need to think of a better way to do it
+            #     frontierPriorityQueue.push(newNode)
+            #     frontierHashTable[newNode.key] = newNode
 
 

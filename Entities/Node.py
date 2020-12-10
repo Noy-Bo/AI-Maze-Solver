@@ -9,8 +9,8 @@ class Node(object):
         self.pathCostWithHeuristic = pathCostWithHeuristic # NOTE this is the keyValue that PQ is sorted by
         self.depth = depth
         self.heuristicCost = heuristicCost
-        self.hashKey = hash((x,y,pathCost,heuristicCost))
-        self.pqIndex = None
+        # self.hashKey = hash((x,y,pathCost,heuristicCost))
+        # self.pqIndex = None
 
 
 
@@ -22,13 +22,15 @@ class Node(object):
         return "node coords: " + str(self.x) + "," + str(self.y) + "  node cost: " + str(self.cost) + " path cost: " + str(self.pathCost)
 
     def __lt__(self, other):
-        if self.pathCostWithHeuristic < other.pathCostWithHeuristic:
-            return self
+        if self.pathCostWithHeuristic > other.pathCostWithHeuristic:
+            return other
         elif self.pathCostWithHeuristic == other.pathCostWithHeuristic:
             if self.heuristicCost is not None:
-                if self.heuristicCost < other.heuristicCost:
-                    return self
-        return other
+                if self.heuristicCost > other.heuristicCost:
+                    return other
+
+
+        return self
 
     def __le__(self,other):
         if self.pathCostWithHeuristic < other.pathCostWithHeuristic:

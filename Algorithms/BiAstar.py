@@ -1,5 +1,5 @@
 import time
-from DataStructures.PriorityQueue import PriorityQueue
+from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
@@ -28,11 +28,11 @@ def BiAstar(maze, startPoint):
     heuristicCounter = 0
     heuristicSum = 0
 
-    backwardsFrontierPriorityQueue = PriorityQueue()
+    backwardsFrontierPriorityQueue = HeapDict()
     backwardsFrontierHashTable = {}
     backwardsExploredHashTable = {}
 
-    frontierPriorityQueue = PriorityQueue()
+    frontierPriorityQueue = HeapDict()
     frontierHashTable = {}
     exploredHashTable = {}
 
@@ -143,8 +143,8 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
     global heuristicSum
     global heuristicCounter
 
-    # the expansion order is like so
-    for direction in ['RU', 'R', 'RD', 'D', 'LD', 'L', 'LU', 'U']:
+    # the expansion order is opposite because last element becomes first in the heap, thus it will expand in the right order
+    for direction in ['U', 'LU', 'L', 'LD', 'D', 'RD', 'R', 'RU']:
 
         x, y = getCoordsFromDirection(direction, node.x, node.y)
         if maze.isValidMove(x, y):
@@ -173,16 +173,19 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
                         newNode.pathCostWithHeuristic == frontierHashTable[
                     newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[
                             newNode.key].heuristicCost):
-                    # updating node
-                    node = frontierHashTable[newNode.key]
-                    node.fatherNode = newNode.fatherNode
-                    node.pathCost = newNode.pathCost
-                    node.heuristicCost = newNode.heuristicCost
-                    node.depth = newNode.depth
-                    node.pathCostWithHeuristic = newNode.pathCostWithHeuristic
-                    frontierPriorityQueue.decreaseKey(node, newNode.pathCostWithHeuristic)
-
-                    frontierHashTable[newNode.key] = node
+                    # # updating node
+                    # node = frontierHashTable[newNode.key]
+                    # node.fatherNode = newNode.fatherNode
+                    # node.pathCost = newNode.pathCost
+                    # node.heuristicCost = newNode.heuristicCost
+                    # node.depth = newNode.depth
+                    # node.pathCostWithHeuristic = newNode.pathCostWithHeuristic
+                    # frontierPriorityQueue.decreaseKey(node, newNode.pathCostWithHeuristic)
+                    #
+                    # frontierHashTable[newNode.key] = node
+                    frontierPriorityQueue.popSpecific(frontierHashTable[newNode.key])
+                    frontierPriorityQueue.push(newNode)
+                    frontierHashTable[newNode.key] = newNode
 
             # node in explored and not in frontier
             elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:

@@ -17,4 +17,4 @@ def movesCountHeuristic(x,y,goalNode):
 
     dx = abs(x - goalNode.x)
     dy = abs(y - goalNode.y)
-    return ((dx + dy)  -  min(dx, dy))*0.9999
+    return ((dx + dy) - min(dx, dy))
