@@ -3,7 +3,7 @@ from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateStats
 
-#
+
 #                   failing try of recursive DLS - fuck recursion
 
 
