@@ -1,5 +1,5 @@
 import time
-from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic
+from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic, chooseHeuristic
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Utilities import getCoordsFromDirection, evaluateStats
@@ -15,12 +15,13 @@ globalExploredCounter = 0
 heuristicCounter = 0
 heuristicSum = 0
 
-def IDAstar (maze,startPoint):
+def IDAstar (maze,startPoint,heuristicName):
     # initialization
     global currentFLimit
     global globalExploredCounter
     global heuristicSum
     global heuristicCounter
+    heuristic = chooseHeuristic(heuristicName)
     cutOffs = []
     isHeuristic = True
     currentFLimit = 0
@@ -38,7 +39,7 @@ def IDAstar (maze,startPoint):
 
 
         # calculating heuristic to first node
-        startPoint.heuristicCost = movesCountHeuristic(startPoint.x,startPoint.y,maze.goalNode)
+        startPoint.heuristicCost = heuristic(startPoint.x,startPoint.y,maze.goalNode)
         startPoint.pathCostWithHeuristic = startPoint.pathCost + startPoint.heuristicCost
 
         # inserting first node
@@ -65,24 +66,24 @@ def IDAstar (maze,startPoint):
             if maze.isGoal(node):
                 # stop the timer
                 runTime = time.time() - startTime
-                evaluateStats('IDAstar', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic,'Diagonal',(heuristicSum/heuristicCounter))
+                evaluateStats('IDAstar', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
                 return True
 
             if node.key not in exploredHashTable:
                 exploredCounter += 1
             exploredHashTable[node.key] = node
-            expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, currentFLimit)
+            expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, currentFLimit,heuristic)
 
 
 
     # time's up!
     runTime = time.time() - startTime
-    evaluateStats('IDAstar', maze, False, node, cutOffs, globalExploredCounter, runTime,isHeuristic,'Diagonal',(heuristicSum/heuristicCounter))
+    evaluateStats('IDAstar', maze, False, node, cutOffs, globalExploredCounter, runTime,isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
     return False
 
 
 # this functions receives a node and expand it in order to all direction, inserting the new expanded nodes into frontierPriorityQueue aswell.
-def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,FLimit):
+def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,FLimit,heuristic):
 
     global heuristicSum
     global heuristicCounter
@@ -96,7 +97,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
             if maze.isValidMove(x,y):
                 newNodeCost = maze.getCost(x, y)
-                heuristicValue = movesCountHeuristic(x,y,maze.goalNode)
+                heuristicValue = heuristic(x,y,maze.goalNode)
                 newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
 
                 heuristicSum += heuristicValue

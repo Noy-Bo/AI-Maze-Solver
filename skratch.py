@@ -1,6 +1,7 @@
 from heapdict import heapdict
 
 from Entities.Node import Node
+from Heuristics.Heuristics import movesCountHeuristic
 
 hd = heapdict()
 
@@ -12,6 +13,9 @@ hd[node2] = node2.pathCostWithHeuristic
 hd[node1] = node1.pathCostWithHeuristic
 hd[node3] = node3.pathCostWithHeuristic
 
-hd[node1] = None
+#hd[node1] = None
 (obj, priority) = hd.popitem()
 pass
+
+h1 = movesCountHeuristic
+h1(node1.x,node1.y,node3)
