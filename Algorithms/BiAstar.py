@@ -1,7 +1,7 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic
+from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic, chooseHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
 
 
@@ -17,12 +17,12 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def BiAstar(maze, startPoint):
+def BiAstar(maze, startPoint,heuristicName):
     # initialization
 
     isHeuristic = True
     exploredCounter = 0
-
+    heuristic = chooseHeuristic(heuristicName)
     global heuristicSum
     global heuristicCounter
     heuristicCounter = 0
@@ -42,13 +42,13 @@ def BiAstar(maze, startPoint):
 
     # calculating heuristic to first node
 
-    startPoint.heuristicCost = movesCountHeuristic(startPoint.x, startPoint.y, maze.goalNode)
+    startPoint.heuristicCost = heuristic(startPoint.x, startPoint.y, maze.goalNode)
     startPoint.pathCostWithHeuristic = startPoint.pathCost + startPoint.heuristicCost
 
     # creating startpoint of backwards search
     backwardsStartPoint = Node(maze.goalNode.x,maze.goalNode.y,maze.goalNode.cost,None,maze.goalNode.cost,
-                               movesCountHeuristic(maze.goalNode.x,maze.goalNode.y,startPoint)+maze.goalNode.cost,0,
-                               movesCountHeuristic(maze.goalNode.x,maze.goalNode.y,startPoint))
+                               heuristic(maze.goalNode.x,maze.goalNode.y,startPoint)+maze.goalNode.cost,0,
+                               heuristic(maze.goalNode.x,maze.goalNode.y,startPoint))
 
 
     # inserting first node at for both searches
@@ -86,13 +86,13 @@ def BiAstar(maze, startPoint):
                     return False
 
                 evaluateStats('BiAstar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              'Diagonal', (heuristicSum / heuristicCounter),backwardsNode,backwardsFrontierPriorityQueue)
+                              heuristicName, (heuristicSum / heuristicCounter),backwardsNode,backwardsFrontierPriorityQueue)
                 return True
 
             if node.key not in exploredHashTable:
                 exploredCounter += 1
             exploredHashTable[node.key] = node
-            expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,turn)
+            expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,turn,heuristic)
 
             turn = False
 
@@ -120,13 +120,13 @@ def BiAstar(maze, startPoint):
                     return False
 
                 evaluateStats('BiAstar', maze, True, frontierNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              'Diagonal', (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue)
+                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue)
                 return True
 
             if node.key not in backwardsExploredHashTable:
                 exploredCounter += 1
             backwardsFrontierHashTable[node.key] = node
-            expandNode(maze, node,backwardsFrontierPriorityQueue,backwardsFrontierHashTable,backwardsExploredHashTable,turn)
+            expandNode(maze, node,backwardsFrontierPriorityQueue,backwardsFrontierHashTable,backwardsExploredHashTable,turn,heuristic)
 
             turn = True
 
@@ -134,12 +134,12 @@ def BiAstar(maze, startPoint):
     # time's up!
     runTime = time.time() - startTime
     evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic, isHeuristic,
-                  'Diagonal')
+                  heuristicName)
     return False
 
 
 # this functions receives a node and expand it in order to all direction, inserting the new expanded nodes into frontierPriorityQueue aswell.
-def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHashTable,turn):
+def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHashTable,turn,heuristic):
     global heuristicSum
     global heuristicCounter
 
@@ -152,9 +152,9 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
 
             # setting heuristic according to which search we are currently at.
             if turn is True: #front search
-                heuristicValue = movesCountHeuristic(x, y, maze.goalNode)
+                heuristicValue = heuristic(x, y, maze.goalNode)
             elif turn is False: # backwards search
-                heuristicValue = movesCountHeuristic(x, y, maze.startNode)
+                heuristicValue = heuristic(x, y, maze.startNode)
 
             newNode = Node(x, y, newNodeCost, node, node.pathCost + newNodeCost,
                            node.pathCost + newNodeCost + heuristicValue, node.depth + 1, heuristicValue)
