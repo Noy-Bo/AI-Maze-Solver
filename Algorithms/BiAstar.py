@@ -1,8 +1,9 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic, chooseHeuristic
+from Heuristics.Heuristics import chooseHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
+
 
 
 # this was programmed using 'AI modern approach' pseudo code for Bidirectional algorithm.
@@ -17,7 +18,7 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def BiAstar(maze, startPoint,heuristicName):
+def BiAstar(maze, startPoint,heuristicName,maxRunTime):
     # initialization
 
     isHeuristic = True
@@ -37,8 +38,6 @@ def BiAstar(maze, startPoint,heuristicName):
     exploredHashTable = {}
 
     turn = False  # True = front turn, false = backwards turn
-
-    maxRuntime = 60 * 60  # seconds
 
     # calculating heuristic to first node
 
@@ -60,7 +59,7 @@ def BiAstar(maze, startPoint,heuristicName):
 
     # Algorithm
     startTime = time.time()
-    while time.time() < (startTime + maxRuntime):
+    while time.time() < (startTime + maxRunTime):
 
         if turn is True: # ============================= FRONT SEARCH TURN
 
@@ -173,16 +172,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
                         newNode.pathCostWithHeuristic == frontierHashTable[
                     newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[
                             newNode.key].heuristicCost):
-                    # # updating node
-                    # node = frontierHashTable[newNode.key]
-                    # node.fatherNode = newNode.fatherNode
-                    # node.pathCost = newNode.pathCost
-                    # node.heuristicCost = newNode.heuristicCost
-                    # node.depth = newNode.depth
-                    # node.pathCostWithHeuristic = newNode.pathCostWithHeuristic
-                    # frontierPriorityQueue.decreaseKey(node, newNode.pathCostWithHeuristic)
-                    #
-                    # frontierHashTable[newNode.key] = node
+
                     frontierPriorityQueue.popSpecific(frontierHashTable[newNode.key])
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
@@ -195,7 +185,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
                             newNode.key].heuristicCost):
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
-                    # remove from explored????
+
 
 
 

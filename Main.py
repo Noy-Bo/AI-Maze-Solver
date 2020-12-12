@@ -1,56 +1,67 @@
-from fibheap import *
 import Utilities
 from Algorithms.Astar import Astar
-from Algorithms.DLS import RecursiveDLS, DLS
 from Algorithms.IDAstar import IDAstar
 from Algorithms.IDS import IDS
 from Algorithms.UCS import UCS
 from Algorithms.BiAstar import BiAstar
-from DataStructures.HeapDict import HeapDict
-from Entities.Node import Node
 
 
 
 # ======================== main ========================
 
+# read max time
+print("Please enter maximum run time (seconds)")
+maxRunTime = int(input())
 
-#algorithmName,startNode,goalNode,mazeSize,maze = Utilities.readInstance('verySmallMaze.txt')
-algorithmName,startNode,goalNode,mazeSize,maze = Utilities.readInstance('mediumMaze.txt')
-#algorithmName,startNode,goalNode,mazeSize,maze = Utilities.readInstance('smallMaze.txt')
+# read path to maze
+print("Please enter path to problem file")
+path = str(input())
 
-# BiAstar(maze,startNode,'movesCount')
-# BiAstar(maze,startNode,'diagonal')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# IDAstar(maze,startNode,'movesCount')
-# IDAstar(maze,startNode,'diagonal')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# Astar(maze,startNode,'movesCount')
-# Astar(maze,startNode,'diagonal')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-# print('@@@@@@@@@@@@@@@@@@@@@@@@')
-UCS(maze,startNode)
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-#IDAstar(maze,startNode)
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-IDS(maze,startNode)
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
-print('@@@@@@@@@@@@@@@@@@@@@@@@')
+# reading file
+algorithmName,startNode,goalNode,mazeSize,maze = Utilities.readInstance(path)
+
+# solving
+print("Solving with BiAstar, please wait...")
+BiAstar(maze,startNode,'movesCount',maxRunTime)
+print('')
+BiAstar(maze,startNode,'diagonal',maxRunTime)
+
+print('')
+print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+print('')
+print("Solving with Astar, please wait...")
+Astar(maze,startNode,'movesCount',maxRunTime)
+print('')
+Astar(maze,startNode,'diagonal',maxRunTime)
+
+
+print('')
+print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+print('')
+print("Solving with UCS, please wait...")
+UCS(maze,startNode,maxRunTime)
+
+
+print('')
+print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+print('')
+print("Solving with IDAstar, please wait...")
+IDAstar(maze,startNode,'movesCount',maxRunTime)
+print('')
+IDAstar(maze,startNode,'diagonal',maxRunTime)
+
+
+print('')
+print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+print('')
+print("Solving with IDS, please wait...")
+IDS(maze,startNode,maxRunTime)
+
+print('')
+print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+print('')
+print("PRESS ENTER TO EXIT")
+input()
 
 pass
 

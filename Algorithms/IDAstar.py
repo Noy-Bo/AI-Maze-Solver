@@ -1,5 +1,5 @@
 import time
-from Heuristics.Heuristics import diagonalHeuristic, movesCountHeuristic, chooseHeuristic
+from Heuristics.Heuristics import  chooseHeuristic
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Utilities import getCoordsFromDirection, evaluateStats
@@ -15,7 +15,7 @@ globalExploredCounter = 0
 heuristicCounter = 0
 heuristicSum = 0
 
-def IDAstar (maze,startPoint,heuristicName):
+def IDAstar (maze,startPoint,heuristicName,maxRunTime):
     # initialization
     global currentFLimit
     global globalExploredCounter
@@ -25,9 +25,8 @@ def IDAstar (maze,startPoint,heuristicName):
     cutOffs = []
     isHeuristic = True
     currentFLimit = 0
-    maxRuntime = 60   # seconds
     startTime = time.time()
-    while time.time() < (startTime + maxRuntime):
+    while time.time() < (startTime + maxRunTime):
 
         currentFLimit += 1
         exploredCounter = 0

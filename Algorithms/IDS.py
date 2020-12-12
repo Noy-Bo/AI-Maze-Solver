@@ -1,5 +1,4 @@
 import time
-
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Utilities import getCoordsFromDirection, evaluateStats
@@ -13,16 +12,15 @@ from Utilities import getCoordsFromDirection, evaluateStats
 currentDepthLimit = -1
 globalExploredCounter = 0
 
-def IDS (maze,startPoint):
+def IDS (maze,startPoint,maxRunTime):
     # initialization
     global currentDepthLimit
     global globalExploredCounter
     cutOffs = []
     isHeuristic = False
     currentDepthLimit = -1
-    maxRuntime = 60  * 3  # seconds
     startTime = time.time()
-    while time.time() < (startTime + maxRuntime):
+    while time.time() < (startTime + maxRunTime):
 
         currentDepthLimit += 1
         exploredCounter = 0
@@ -104,15 +102,6 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                 # node is in frontier
                 elif newNode.key in frontierHashTable:
                     if newNode.depth < frontierHashTable[newNode.key].depth or (newNode.pathCostWithHeuristic == frontierHashTable[newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[newNode.key].heuristicCost):
-                        # #updating node
-                        # node = frontierHashTable[newNode.key]
-                        # node.fatherNode = newNode.fatherNode
-                        # node.pathCost = newNode.pathCost
-                        # node.heuristicCost = newNode.heuristicCost
-                        # node.depth = newNode.depth
-                        # node.pathCostWithHeuristic = newNode.pathCostWithHeuristic
-                        # frontierPriorityQueue.decreaseKey(node,newNode.pathCostWithHeuristic)
-
 
                         frontierPriorityQueue.popSpecific(frontierHashTable[newNode.key])
                         frontierPriorityQueue.push(newNode)

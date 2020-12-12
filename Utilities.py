@@ -1,5 +1,3 @@
-import numpy as np
-
 from DataStructures.HeapDict import HeapDict
 from DataStructures.PriorityQueue import PriorityQueue
 from DataStructures.PriorityQueueDictionary import PriorityQueueDictionary
@@ -33,8 +31,6 @@ def readInstance(fileName):
     splitGP[1] = int(splitGP[1])
     goalNode = Node(splitGP[0],splitGP[1],maze[splitGP[0]][splitGP[1]])
     startNode = Node(splitSP[0],splitSP[1],maze[splitSP[0]][splitSP[1]],None,maze[splitSP[0]][splitSP[1]],None,0)
-    npArr = np.array(maze)
-    npArr = npArr.transpose()
     maze = Maze(maze, mazeSize, goalNode,startNode)
 
     return algorithmName,startNode,goalNode,mazeSize,maze
