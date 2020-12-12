@@ -1,7 +1,4 @@
 import time
-
-import fibheap
-
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateStats
@@ -17,7 +14,7 @@ from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateSt
 
 
 
-def UCS (maze,startPoint):
+def UCS (maze,startPoint,maxRunTime):
 
     # initialization
     isHeuristic = False
@@ -28,15 +25,13 @@ def UCS (maze,startPoint):
     frontierHashTable = {}
     exploredHashTable = {}
 
-    maxRuntime = 60 # seconds
-
     # inserting first node
     frontierPriorityQueue.push(startPoint)
     frontierHashTable[startPoint.key] = startPoint
 
     # Algorithm
     startTime = time.time()
-    while  time.time() < (startTime + maxRuntime) :
+    while  time.time() < (startTime + maxRunTime) :
         if frontierPriorityQueue.isEmpty():
             return False
 

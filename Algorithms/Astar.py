@@ -1,10 +1,5 @@
-import copy
 import time
-from heapq import siftup
-
 from DataStructures.HeapDict import HeapDict
-from DataStructures.PriorityQueue import PriorityQueue
-from DataStructures.PriorityQueueDictionary import PriorityQueueDictionary
 from Entities.Node import Node
 from Heuristics.Heuristics import chooseHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
@@ -19,7 +14,7 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def Astar (maze,startPoint,heuristicName):
+def Astar (maze,startPoint,heuristicName,maxRunTime):
     # initialization
     isHeuristic = True
     heuristic = chooseHeuristic(heuristicName)
@@ -34,8 +29,6 @@ def Astar (maze,startPoint,heuristicName):
     frontierHashTable = {}
     exploredHashTable = {}
 
-    maxRuntime = 60*60  # seconds
-
     # calculating heuristic to first node
     startPoint.heuristicCost = heuristic(startPoint.x,startPoint.y,maze.goalNode)
     startPoint.pathCostWithHeuristic = startPoint.pathCost + startPoint.heuristicCost
@@ -46,7 +39,7 @@ def Astar (maze,startPoint,heuristicName):
 
     # Algorithm
     startTime = time.time()
-    while time.time() < (startTime + maxRuntime):
+    while time.time() < (startTime + maxRunTime):
         if frontierPriorityQueue.isEmpty():
             return False
 
@@ -67,7 +60,7 @@ def Astar (maze,startPoint,heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
-    evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
+    evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
     return False
 
 
@@ -102,39 +95,10 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[
                             newNode.key].heuristicCost):
 
-                    # # pqdict
-                    # frontierPriorityQueue.replace(frontierHashTable[newNode.key],newNode)
-                    # frontierHashTable[newNode.key] = newNode
-
-                    # heapdict try
+                    # heapdict
                     frontierPriorityQueue.popSpecific(frontierHashTable[newNode.key])
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
-
-
-
-                    # #updating node heapdict
-                    # node = frontierHashTable[newNode.key]
-                    # node.fatherNode = copy.copy(newNode.fatherNode)
-                    # node.pathCost = copy.copy(newNode.pathCost)
-                    # node.heuristicCost = copy.copy(newNode.heuristicCost)
-                    # node.depth = copy.copy(newNode.depth)
-                    # node.pathCostWithHeuristic = copy.copy(newNode.pathCostWithHeuristic)
-                    # frontierPriorityQueue.decreaseKey(node, node.pathCostWithHeuristic,node.heuristicCost)
-                    # #frontierHashTable[newNode.key] = node
-
-                    # #test reg pq
-                    # i = 0
-                    # for e in frontierPriorityQueue.heap:
-                    #
-                    #     if e[1].x == newNode.x and e[1].y == newNode.y:
-                    #         e[1].fatherNode = newNode.fatherNode
-                    #         e[1].pathCost = newNode.pathCost
-                    #         e[1].heuristicCost = newNode.heuristicCost
-                    #         e[1].depth = newNode.depth
-                    #         e[1].pathCostWithHeuristic = newNode.pathCostWithHeuristic
-                    #         siftup(frontierPriorityQueue.heap,i)
-                    #     i+=1
 
             # node in explored and not in frontier
             elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:
