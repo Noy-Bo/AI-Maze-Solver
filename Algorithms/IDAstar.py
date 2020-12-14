@@ -55,6 +55,10 @@ def IDAstar (maze,maxRunTime,heuristicName):
             node = frontierPriorityQueue.pop()
             frontierHashTable.pop(node.key)
 
+            # appending childs so we simulate a tree
+            if node != startPoint:
+                node.fatherNode.childNodes.append(node)
+
             # this case indicates a cut-off, this algorithm generates a cutoff when the depth limit is reached
             if node.pathCostWithHeuristic >= currentFLimit:
                 cutOffs.append(node)

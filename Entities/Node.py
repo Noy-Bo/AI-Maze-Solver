@@ -9,6 +9,7 @@ class Node(object):
         self.pathCostWithHeuristic = pathCostWithHeuristic # NOTE this is the keyValue that PQ is sorted by
         self.depth = depth
         self.heuristicCost = heuristicCost
+        self.childNodes = []
 
 
 

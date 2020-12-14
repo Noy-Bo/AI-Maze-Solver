@@ -40,6 +40,10 @@ def UCS (maze,maxRunTime):
         node = frontierPriorityQueue.pop()
         frontierHashTable.pop(node.key)
 
+        # appending childs so we simulate a tree
+        if node != startPoint:
+            node.fatherNode.childNodes.append(node)
+
         if maze.isGoal(node):
 
             # stop the timer
