@@ -15,13 +15,14 @@ globalExploredCounter = 0
 heuristicCounter = 0
 heuristicSum = 0
 
-def IDAstar (maze,startPoint,heuristicName,maxRunTime):
+def IDAstar (maze,maxRunTime,heuristicName):
     # initialization
     global currentFLimit
     global globalExploredCounter
     global heuristicSum
     global heuristicCounter
     heuristic = chooseHeuristic(heuristicName)
+    startPoint = maze.startNode
     cutOffs = []
     isHeuristic = True
     currentFLimit = 0

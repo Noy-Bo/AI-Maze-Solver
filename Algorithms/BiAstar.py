@@ -18,7 +18,7 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def BiAstar(maze, startPoint,heuristicName,maxRunTime):
+def BiAstar(maze,maxRunTime, heuristicName):
     # initialization
 
     isHeuristic = True
@@ -28,6 +28,7 @@ def BiAstar(maze, startPoint,heuristicName,maxRunTime):
     global heuristicCounter
     heuristicCounter = 0
     heuristicSum = 0
+    startPoint = maze.startNode
 
     backwardsFrontierPriorityQueue = HeapDict()
     backwardsFrontierHashTable = {}
@@ -163,6 +164,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
 
             # new node, insert it to PQ and Hashtable
             if newNode.key not in exploredHashTable and newNode.key not in frontierHashTable:
+
                 frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
 
