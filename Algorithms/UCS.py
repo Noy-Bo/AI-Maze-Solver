@@ -14,7 +14,7 @@ from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateSt
 
 
 
-def UCS (maze,startPoint,maxRunTime):
+def UCS (maze,maxRunTime):
 
     # initialization
     isHeuristic = False
@@ -25,6 +25,7 @@ def UCS (maze,startPoint,maxRunTime):
     frontierHashTable = {}
     exploredHashTable = {}
 
+    startPoint = maze.startNode
     # inserting first node
     frontierPriorityQueue.push(startPoint)
     frontierHashTable[startPoint.key] = startPoint

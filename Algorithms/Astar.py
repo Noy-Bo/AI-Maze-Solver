@@ -14,7 +14,7 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def Astar (maze,startPoint,heuristicName,maxRunTime):
+def Astar (maze,maxRunTime,heuristicName):
     # initialization
     isHeuristic = True
     heuristic = chooseHeuristic(heuristicName)
@@ -24,6 +24,8 @@ def Astar (maze,startPoint,heuristicName,maxRunTime):
     global heuristicCounter
     heuristicCounter = 0
     heuristicSum = 0
+
+    startPoint = maze.startNode
 
     frontierPriorityQueue = HeapDict()
     frontierHashTable = {}

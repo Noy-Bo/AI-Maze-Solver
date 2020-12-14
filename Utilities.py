@@ -1,10 +1,11 @@
+
 from DataStructures.HeapDict import HeapDict
 from DataStructures.PriorityQueue import PriorityQueue
 from DataStructures.PriorityQueueDictionary import PriorityQueueDictionary
 from Entities.Maze import Maze
 from Entities.Node import Node
 
-
+# reading problem file
 def readInstance(fileName):
     file = open(fileName, 'r')
     lines = file.readlines()
@@ -35,7 +36,7 @@ def readInstance(fileName):
 
     return algorithmName,startNode,goalNode,mazeSize,maze
 
-
+# getting the coords move from direction string
 def getCoordsFromDirection(direction, x, y):
     if direction == 'RU':
         return x+1,y-1
@@ -57,6 +58,7 @@ def getCoordsFromDirection(direction, x, y):
     print("ERROR")
     return x,y
 
+# getting the direction string from coords move
 def getDirectionFromCoords(currX,currY,fatherX,fatherY):
 
     if (currX - fatherX) == 0 and (currY - fatherY) == -1:
@@ -77,6 +79,10 @@ def getDirectionFromCoords(currX,currY,fatherX,fatherY):
         return 'RU'
     return 'ERROR'
 
+
+
+
+# calculate the statistics for an algorithm run
 def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,exploredCounter,runTime,isHeuristic
                   ,heuristicName = None,heuristicAvg = None,backwardsNode=None,backwardsFrontierPriorityQueue=None):
 
@@ -169,13 +175,31 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     else:
         avgDepth = sumDepth / frontierCounter
 
+    if solved is False:
+        movesString = "-"
+        optimalSolutionCost = "-"
 
+    if algorithmName.lower() == "ids":
+        minDepth = '-'
+        avgDepth = '-'
 
 
     if isHeuristic == False:
-        heuristicName = 'None'
+        heuristicName = '-'
         heuristicAvg =  '-'
 
+    # writing output file
+    resultFile = open("OutputResult.txt","w")
+    if solved is True:
+        resultFile.write(str(movesString) + " " + str(optimalSolutionCost) + " " + str(exploredCounter) + "\n")
+    elif solved is False:
+        resultFile.write("FAILED\n")
+    resultFile.write(str(algorithmName) + " | " + str(heuristicName) + " | " + str(exploredCounter) + " | " + str(solutionDepth / exploredCounter) +
+                     " | " + str(solved) + " | " + str(runTime) + " | " + str(EBF) + " | " + str(heuristicAvg) + " | " + str(minDepth) + " | " + str(avgDepth) + " | " + str(maxDepth))
+    resultFile.close()
+
+
+    # printing to console
     print("algorithm name: {}".format(algorithmName))
     print("moves: {}".format(movesString))
     print("optimal path cost: {}".format(optimalSolutionCost))
@@ -190,9 +214,5 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     print("min depth: {}".format(minDepth))
     print("average depth: {}".format(avgDepth))
     print("max depth: {}".format(maxDepth))
-
-
-
-
 
     return

@@ -12,12 +12,13 @@ from Utilities import getCoordsFromDirection, evaluateStats
 currentDepthLimit = -1
 globalExploredCounter = 0
 
-def IDS (maze,startPoint,maxRunTime):
+def IDS (maze,maxRunTime):
     # initialization
     global currentDepthLimit
     global globalExploredCounter
     cutOffs = []
     isHeuristic = False
+    startPoint = maze.startNode
     currentDepthLimit = -1
     startTime = time.time()
     while time.time() < (startTime + maxRunTime):
