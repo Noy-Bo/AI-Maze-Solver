@@ -15,7 +15,7 @@ def getAlgorithmFromString(algorithmString):
         return IDAstar, True
     elif algorithmString.lower() == "ids":
         return IDS, False
-    elif algorithmString.lower() == "UCS":
+    elif algorithmString.lower() == "ucs":
         return UCS, False
     else:
         return "ERROR"
@@ -80,13 +80,17 @@ path = str(input())
 # reading problem
 algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
 
-# # run on all
-# runOnAll(maze,maxRunTime)
+# run on all
+runOnAll(maze,maxRunTime)
 
-# run as requeusted
-algorithm, isHeuristic = getAlgorithmFromString(algorithmName)
-print("solving with "+algorithmName+", please wait...")
-if isHeuristic is True:
-    algorithm(maze, maxRunTime, "movesCount")
-else:
-    algorithm(maze, maxRunTime)
+# # run as requeusted
+# algorithm, isHeuristic = getAlgorithmFromString(algorithmName)
+# print("solving with "+algorithmName+", please wait...")
+# if isHeuristic is True:
+#     algorithm(maze, maxRunTime, "diagonal")
+# else:
+#     algorithm(maze, maxRunTime)
+
+print('')
+print("PRESS ENTER TO EXIT")
+input()

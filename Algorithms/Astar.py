@@ -48,6 +48,11 @@ def Astar (maze,maxRunTime,heuristicName):
         # deleting node from frontierPriorityQueue
         node = frontierPriorityQueue.pop()
         frontierHashTable.pop(node.key)
+
+        # appending childs so we simulate a tree
+        if node != startPoint:
+            node.fatherNode.childNodes.append(node)
+
         # checking to see if we hit the solution
         if maze.isGoal(node):
             # stop the timer
@@ -55,8 +60,8 @@ def Astar (maze,maxRunTime,heuristicName):
             evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter) )
             return True
 
-        if node.key not in exploredHashTable:
-            exploredCounter += 1
+        #if node.key not in exploredHashTable:
+        exploredCounter += 1
         exploredHashTable[node.key] = node
         expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,heuristic)
 

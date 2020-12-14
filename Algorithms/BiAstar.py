@@ -71,6 +71,10 @@ def BiAstar(maze,maxRunTime, heuristicName):
             node = frontierPriorityQueue.pop()
             frontierHashTable.pop(node.key)
 
+            # appending childs so we simulate a tree
+            if node != startPoint:
+                node.fatherNode.childNodes.append(node)
+
             # checking if we hit the solution
             if isIntersecting(node,backwardsFrontierHashTable,backwardsExploredHashTable):
                 # stop the timer
@@ -86,7 +90,7 @@ def BiAstar(maze,maxRunTime, heuristicName):
                     return False
 
                 evaluateStats('BiAstar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),backwardsNode,backwardsFrontierPriorityQueue)
+                              heuristicName, (heuristicSum / heuristicCounter),backwardsNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
                 return True
 
             if node.key not in exploredHashTable:
@@ -105,6 +109,10 @@ def BiAstar(maze,maxRunTime, heuristicName):
             node = backwardsFrontierPriorityQueue.pop()
             backwardsFrontierHashTable.pop(node.key)
 
+            # appending childs so we simulate a tree
+            if node.key != backwardsStartPoint.key:
+                node.fatherNode.childNodes.append(node)
+
             # checking if we hit the solution
             if isIntersecting(node,frontierHashTable,exploredHashTable):
                 # stop the timer
@@ -120,11 +128,11 @@ def BiAstar(maze,maxRunTime, heuristicName):
                     return False
 
                 evaluateStats('BiAstar', maze, True, frontierNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue)
+                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
                 return True
 
-            if node.key not in backwardsExploredHashTable:
-                exploredCounter += 1
+            #if node.key not in backwardsExploredHashTable:
+            exploredCounter += 1
             backwardsFrontierHashTable[node.key] = node
             expandNode(maze, node,backwardsFrontierPriorityQueue,backwardsFrontierHashTable,backwardsExploredHashTable,turn,heuristic)
 
@@ -133,8 +141,8 @@ def BiAstar(maze,maxRunTime, heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
-    evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic, isHeuristic,
-                  heuristicName)
+    evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                              heuristicName, (heuristicSum / heuristicCounter),Nםמק,backwardsFrontierPriorityQueue,backwardsStartPoint)
     return False
 
 
