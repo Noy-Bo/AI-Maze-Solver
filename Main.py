@@ -1,9 +1,9 @@
 import Utilities
-from Algorithms.Astar import Astar
-from Algorithms.IDAstar import IDAstar
-from Algorithms.IDS import IDS
-from Algorithms.UCS import UCS
-from Algorithms.BiAstar import BiAstar
+from Algorithms.Astar_visualized import Astar
+from Algorithms.IDAstar_visualized import IDAstar
+from Algorithms.IDS_visualized import IDS
+from Algorithms.UCS_visualized import UCS
+from Algorithms.BiAstar_visualized import BiAstar
 
 
 def getAlgorithmFromString(algorithmString):
