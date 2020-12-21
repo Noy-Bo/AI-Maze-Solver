@@ -1,11 +1,10 @@
 import time
-import turtle
-
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
+from GUI.GUI import Pen
 from Heuristics.Heuristics import chooseHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
-from GUI import Pen
+
 
 # this was programmed using 'AI modern approach' pseudo code for Astar algorithm.
 #                      @@@@ Astar algorithm. @@@
@@ -18,8 +17,10 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def Astar (maze,maxRunTime,heuristicName):
+def AstarVisual (maze,maxRunTime,heuristicName):
     global pen
+    visual_counter = -5
+    visual_turns = 2
     pen = Pen(maze)
     pen.maze_setup()
 
@@ -75,7 +76,15 @@ def Astar (maze,maxRunTime,heuristicName):
         exploredHashTable[node.key] = node
         expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,heuristic)
         # mark - expanding node, node.x/node.y - hard yellow
-        pen.paint_tile(node.x, node.y, pen.dark_green, True)
+        visual_counter +=1
+        if visual_counter > visual_turns:
+            pen.paint_tile(node.x, node.y, pen.dark_green, True)
+            visual_turns*=1.045
+            if visual_turns > 110:
+                visual_turns = 110
+            visual_counter = 0
+        else:
+            pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
     # time's up!
     runTime = time.time() - startTime
