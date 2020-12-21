@@ -4,7 +4,7 @@ def diagonalHeuristic(x,y,goalNode):
     maxDistance = max(abs(x - goalNode.x),abs(y - goalNode.y))
     minDistance = min(abs(x - goalNode.x),abs(y - goalNode.y))
 
-    diagonalMoveCost = 0.58 #   ~(2 - sqrt(2))
+    diagonalMoveCost = 1 #   ~(2 - sqrt(2))
     regularMoveCost = 1
 
     h = diagonalMoveCost*minDistance + regularMoveCost*(maxDistance-minDistance)

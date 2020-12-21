@@ -139,7 +139,10 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
 
     solutionDepth = max(backwardsSolutionDepth,solutionDepth) # this might need to be changed, maybe sum the 2 depths???
 
-    EBF = exploredCounter**(1/solutionDepth)
+    if solved is True:
+        EBF = exploredCounter**(1/solutionDepth)
+    else:
+        EBF = '-'
 
 
 
