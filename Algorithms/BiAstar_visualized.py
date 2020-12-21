@@ -3,7 +3,7 @@ from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from Heuristics.Heuristics import chooseHeuristic
 from Utilities import getCoordsFromDirection, evaluateStats
-from GUI import Pen
+from GUI.GUI import Pen
 
 
 # this was programmed using 'AI modern approach' pseudo code for Bidirectional algorithm.
@@ -18,11 +18,12 @@ heuristicCounter = 0
 heuristicSum = 0
 
 
-def BiAstar(maze,maxRunTime, heuristicName):
+def BiAstarVisual(maze,maxRunTime, heuristicName):
     global pen
     pen = Pen(maze)
     pen.maze_setup()
-
+    visual_counter = -5
+    visual_turns = 2
     # initialization
 
     isHeuristic = True
@@ -106,7 +107,15 @@ def BiAstar(maze,maxRunTime, heuristicName):
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,turn,heuristic)
 
             # mark - expanding node, node.x/node.y - hard yellow
-            pen.paint_tile(node.x, node.y, pen.dark_green, True)
+            visual_counter += 1
+            if visual_counter > visual_turns:
+                pen.paint_tile(node.x, node.y, pen.dark_green, True)
+                visual_turns *= 1.045
+                if visual_turns > 110:
+                    visual_turns = 110
+                visual_counter = 0
+            else:
+                pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
             turn = False
 
@@ -148,7 +157,15 @@ def BiAstar(maze,maxRunTime, heuristicName):
             exploredCounter += 1
 
             # mark - expanding node, node.x/node.y - hard yellow
-            pen.paint_tile(node.x, node.y, pen.dark_green, True)
+            visual_counter += 1
+            if visual_counter > visual_turns:
+                pen.paint_tile(node.x, node.y, pen.dark_green, True)
+                visual_turns *= 1.045
+                if visual_turns > 110:
+                    visual_turns = 110
+                visual_counter = 0
+            else:
+                pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
             backwardsFrontierHashTable[node.key] = node
             expandNode(maze, node,backwardsFrontierPriorityQueue,backwardsFrontierHashTable,backwardsExploredHashTable,turn,heuristic)
@@ -159,7 +176,7 @@ def BiAstar(maze,maxRunTime, heuristicName):
     # time's up!
     runTime = time.time() - startTime
     evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),Nםמק,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
     return False
 
 

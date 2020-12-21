@@ -1,22 +1,51 @@
 import Utilities
-from Algorithms.Astar_visualized import Astar
-from Algorithms.IDAstar_visualized import IDAstar
-from Algorithms.IDS_visualized import IDS
-from Algorithms.UCS_visualized import UCS
-from Algorithms.BiAstar_visualized import BiAstar
+from Algorithms.Astar import Astar
+
+from Algorithms.Astar_visualized import AstarVisual
+from Algorithms.BiAstar import BiAstar
+from Algorithms.IDAstar import IDAstar
+from Algorithms.IDAstar_visualized import IDAstarVisual
+
+from Algorithms.BiAstar_visualized import BiAstarVisual
+from Algorithms.IDS import IDS
+from Algorithms.IDS_visualized import IDSVisual
+from Algorithms.UCS import UCS
+from Algorithms.UCS_visualized import UCSVisual
 
 
-def getAlgorithmFromString(algorithmString):
+
+def getAlgorithmFromString(algorithmString,isVisual):
+
     if algorithmString.lower() == "biastar":
-        return BiAstar, True
+        if isVisual is True:
+            return BiAstarVisual, True
+        else:
+            return BiAstar, True
+
     elif algorithmString.lower() == "astar":
-       return Astar, True
+        if isVisual is True:
+            return AstarVisual, True
+        else:
+            return Astar, True
+
     elif algorithmString.lower() == "idastar":
-        return IDAstar, True
+        if isVisual is True:
+            return IDAstarVisual, True
+        else:
+            return IDAstar, True
+
     elif algorithmString.lower() == "ids":
-        return IDS, False
+        if isVisual is True:
+            return IDSVisual, False
+        else:
+            return IDS, False
+
     elif algorithmString.lower() == "ucs":
-        return UCS, False
+        if isVisual is True:
+            return UCSVisual, False
+        else:
+            return UCS, False
+
     else:
         return "ERROR"
 
@@ -69,7 +98,13 @@ def runOnAll(maze, maxRunTime):
 
 
 # ======================== main ========================
-
+# ask if to visualize
+print("would you like to see visualization? Y/N ")
+isVisual = str(input())
+if isVisual.lower() == 'y':
+    isVisual = True
+else:
+    isVisual = False
 # read max time
 print("Please enter maximum run time (seconds)")
 maxRunTime = int(input())
@@ -81,15 +116,16 @@ path = str(input())
 algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
 
 # run on all
-runOnAll(maze,maxRunTime)
+#runOnAll(maze,maxRunTime)
 
 # # run as requeusted
-# algorithm, isHeuristic = getAlgorithmFromString(algorithmName)
-# print("solving with "+algorithmName+", please wait...")
-# if isHeuristic is True:
-#     algorithm(maze, maxRunTime, "diagonal")
-# else:
-#     algorithm(maze, maxRunTime)
+
+algorithm, isHeuristic = getAlgorithmFromString(algorithmName,isVisual)
+print("solving with "+algorithmName+", please wait...")
+if isHeuristic is True:
+    algorithm(maze, maxRunTime, "movesCount")
+else:
+    algorithm(maze, maxRunTime)
 
 print('')
 print("PRESS ENTER TO EXIT")

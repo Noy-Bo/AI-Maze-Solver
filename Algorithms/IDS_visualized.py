@@ -1,7 +1,7 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from GUI import Pen
+from GUI.GUI import Pen
 from Utilities import getCoordsFromDirection, evaluateStats
 
 # this  algorithm was programmed using 'AI modern approach' pseudo code for IDS algorithm.
@@ -16,10 +16,12 @@ currentDepthLimit = -1
 globalExploredCounter = 0
 
 
-def IDS(maze, maxRunTime):
+def IDSVisual(maze, maxRunTime):
     global pen
     pen = Pen(maze)
     pen.maze_setup()
+    visual_counter = -5
+    visual_turns = 2
 
     # initialization
     global currentDepthLimit
@@ -81,7 +83,15 @@ def IDS(maze, maxRunTime):
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, currentDepthLimit)
 
             # mark - expanding node, node.x/node.y - hard yellow
-            pen.paint_tile(node.x, node.y, pen.dark_green, True)
+            visual_counter += 1
+            if visual_counter > visual_turns:
+                pen.paint_tile(node.x, node.y, pen.dark_green, True)
+                visual_turns *= 1.045
+                if visual_turns > 110:
+                    visual_turns = 110
+                visual_counter = 0
+            else:
+                pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
     # time's up!
     runTime = time.time() - startTime
