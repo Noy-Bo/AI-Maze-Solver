@@ -1,7 +1,7 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from GUI import Pen
+from GUI.GUI import Pen
 from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateStats
 
 
@@ -14,10 +14,13 @@ from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateSt
 
 pen = None
 
-def UCS (maze,maxRunTime):
+def UCSVisual (maze,maxRunTime):
+
     global pen
     pen = Pen(maze)
     pen.maze_setup()
+    visual_counter = -5
+    visual_turns = 2
 
     # initialization
     isHeuristic = False
@@ -60,7 +63,15 @@ def UCS (maze,maxRunTime):
         exploredCounter += 1
         expandNode(maze,node,frontierPriorityQueue,frontierHashTable,exploredHashTable)
         # mark - expanding node, node.x/node.y - hard yellow
-        pen.paint_tile(node.x, node.y, pen.dark_green, True)
+        visual_counter += 1
+        if visual_counter > visual_turns:
+            pen.paint_tile(node.x, node.y, pen.dark_green, True)
+            visual_turns *= 1.045
+            if visual_turns > 110:
+                visual_turns = 110
+            visual_counter = 0
+        else:
+            pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
     # time's up!
     runTime = time.time() - startTime

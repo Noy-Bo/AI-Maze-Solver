@@ -1,6 +1,6 @@
 import time
 
-from GUI import Pen
+from GUI.GUI import Pen
 from Heuristics.Heuristics import  chooseHeuristic
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
@@ -19,10 +19,12 @@ globalExploredCounter = 0
 heuristicCounter = 0
 heuristicSum = 0
 
-def IDAstar (maze,maxRunTime,heuristicName):
+def IDAstarVisual (maze,maxRunTime,heuristicName):
     global pen
     pen = Pen(maze)
     pen.maze_setup()
+    visual_counter = -5
+    visual_turns = 2
 
     # initialization
     global currentFLimit
@@ -91,7 +93,15 @@ def IDAstar (maze,maxRunTime,heuristicName):
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, currentFLimit,heuristic)
 
             # mark - expanding node, node.x/node.y - hard yellow
-            pen.paint_tile(node.x, node.y, pen.dark_green, True)
+            visual_counter += 1
+            if visual_counter > visual_turns:
+                pen.paint_tile(node.x, node.y, pen.dark_green, True)
+                visual_turns *= 1.045
+                if visual_turns > 110:
+                    visual_turns = 110
+                visual_counter = 0
+            else:
+                pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
     # time's up!
     runTime = time.time() - startTime
