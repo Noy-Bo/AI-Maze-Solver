@@ -159,7 +159,7 @@ def BiAstar(maze,maxRunTime, heuristicName):
     # time's up!
     runTime = time.time() - startTime
     evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),Nםמק,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
     return False
 
 
