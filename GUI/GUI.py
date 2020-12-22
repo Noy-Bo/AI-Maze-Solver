@@ -1,31 +1,48 @@
 import turtle
+import tkinter as tk
 
 
-class Pen(turtle.Turtle):
-    def __init__(self, maze):
-        turtle.Turtle.__init__(self)
+class Pen(turtle.RawPen):
+    __instance = None
+    maze = None
+    tile_size_px = 0
+
+    def __init__(self, mazeScreen):
+        """ Virtually private constructor. """
+        if Pen.__instance != None:
+            raise Exception("This class is a singleton!")
+        else:
+            Pen.__instance = self
+        turtle.RawPen.__init__(self, mazeScreen.cv)
         self.color('')
-        wn = turtle.Screen()
-        wn.setup(630, 630)
-        wn.bgcolor("white")
-        wn.title("Maze")
-        wn.tracer(0, 0)
-        # turtle.tracer(0, 0)
-        self.test_wn = turtle.Screen()
-        self.maze = maze
-        self.tile_size_px = 600 / maze.size
-        self.shape("square")
-        self.shapesize((35 / (1.3*maze.size + 1)), (35 / (1.3*maze.size + 1)), 0)
-        self.penup()
+        self.mazeScreen = mazeScreen
+        self.mazeScreen.bgcolor("white")
         self.speed(0)
+        self._tracer(False)
+        # self.mazeScreen.tracer(0,0)
+        self.shape("square")
+        self.penup()
         self.wall_color = "#424242"
         self.path_color = "#D32F2F"
         self.light_green = '#DCE775'
         self.dark_green = '#43A047'
         self.num_of_setup_stamps = 0
 
+
+    @staticmethod
+    def getInstance(mazeScreen = None):
+        """ Static access method. """
+        if Pen.__instance == None:
+            Pen(mazeScreen)
+        return Pen.__instance
+
     # setting up the maze
-    def maze_setup(self):
+    def maze_setup(self, maze):
+        self.clear()
+        print(len(self.stampItems))
+        self.maze = maze
+        self.tile_size_px = 600 / maze.size
+        self.shapesize((35 / (1.3 * maze.size + 1)), (35 / (1.3 * maze.size + 1)), 0)
         for y in range(0, self.maze.size):
             for x in range(0, self.maze.size):
                 # check if value is a wall (-1)
@@ -55,13 +72,13 @@ class Pen(turtle.Turtle):
         if (self.maze.goalNode.x == x and self.maze.goalNode.y == y) or (
                 self.maze.startNode.x == x and self.maze.startNode.y == y):
             return
-        self.color(color)
         self.goto(self.calculate_node(x, y, False))
+        self.color(color)
         self.stamp()
         # update window view
         if update is True:
-            wn = turtle.Screen()
-            wn.update()
+            # wn = turtle.Screen()
+            self.mazeScreen.update()
         # paint number over scanned tiles. slows down. need to put it before if update is True
         # if color != self.wall_color:
         #     # self.paint_number(x, y)
@@ -70,8 +87,8 @@ class Pen(turtle.Turtle):
     # paint value number over tile
     def paint_number(self, x, y):
         font_size = 700 / (self.maze.size * 2)
-        self.color(self.wall_color)
         self.goto(self.calculate_node(x, y, True))
+        self.color(self.wall_color)
         style = ('Arial', int(font_size))
         self.write(self.maze.getCost(x, y), font=style, align='center')
 
@@ -90,7 +107,7 @@ class Pen(turtle.Turtle):
                 bi_node = bi_node.fatherNode
         for node in path:
             self.paint_tile(node.x, node.y, self.path_color, True)
-        turtle.exitonclick()
+        # turtle.exitonclick()
         # easteregg
         # self.goto(0,0)
         # self.color("black")

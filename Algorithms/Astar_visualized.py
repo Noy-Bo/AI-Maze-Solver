@@ -19,10 +19,10 @@ heuristicSum = 0
 
 def AstarVisual (maze,maxRunTime,heuristicName):
     global pen
-    visual_counter = -5
+    pen = Pen.getInstance()
+    pen.maze_setup(maze)
+    visual_counter = 1
     visual_turns = 2
-    pen = Pen(maze)
-    pen.maze_setup()
 
     # initialization
     isHeuristic = True

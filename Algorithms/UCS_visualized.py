@@ -17,9 +17,9 @@ pen = None
 def UCSVisual (maze,maxRunTime):
 
     global pen
-    pen = Pen(maze)
-    pen.maze_setup()
-    visual_counter = -5
+    pen = Pen.getInstance()
+    pen.maze_setup(maze)
+    visual_counter = 1
     visual_turns = 2
 
     # initialization
