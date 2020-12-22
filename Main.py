@@ -1,3 +1,5 @@
+from turtle import TurtleScreen, RawTurtle, Screen, RawPen, Turtle
+
 import Utilities
 from Algorithms.Astar import Astar
 
@@ -12,42 +14,10 @@ from Algorithms.IDS_visualized import IDSVisual
 from Algorithms.UCS import UCS
 from Algorithms.UCS_visualized import UCSVisual
 
+from tkinter import*
+from tkinter import ttk, filedialog
 
-
-def getAlgorithmFromString(algorithmString,isVisual):
-
-    if algorithmString.lower() == "biastar":
-        if isVisual is True:
-            return BiAstarVisual, True
-        else:
-            return BiAstar, True
-
-    elif algorithmString.lower() == "astar":
-        if isVisual is True:
-            return AstarVisual, True
-        else:
-            return Astar, True
-
-    elif algorithmString.lower() == "idastar":
-        if isVisual is True:
-            return IDAstarVisual, True
-        else:
-            return IDAstar, True
-
-    elif algorithmString.lower() == "ids":
-        if isVisual is True:
-            return IDSVisual, False
-        else:
-            return IDS, False
-
-    elif algorithmString.lower() == "ucs":
-        if isVisual is True:
-            return UCSVisual, False
-        else:
-            return UCS, False
-
-    else:
-        return "ERROR"
+from GUI.GUI_interface import GuiInterface
 
 
 def runOnAll(maze, maxRunTime):
@@ -97,36 +67,39 @@ def runOnAll(maze, maxRunTime):
     input()
 
 
+gui = GuiInterface()
+gui.setupInterface()
+
 # ======================== main ========================
-# ask if to visualize
-print("would you like to see visualization? Y/N ")
-isVisual = str(input())
-if isVisual.lower() == 'y':
-    isVisual = True
-else:
-    isVisual = False
-# read max time
-print("Please enter maximum run time (seconds)")
-maxRunTime = int(input())
-
-# read path to problem
-print("Please enter path to problem file")
-path = str(input())
-# reading problem
-algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
-
-# run on all
-#runOnAll(maze,maxRunTime)
-
-# # run as requeusted
-
-algorithm, isHeuristic = getAlgorithmFromString(algorithmName,isVisual)
-print("solving with "+algorithmName+", please wait...")
-if isHeuristic is True:
-    algorithm(maze, maxRunTime, "movesCount")
-else:
-    algorithm(maze, maxRunTime)
-
-print('')
-print("PRESS ENTER TO EXIT")
-input()
+# # ask if to visualize
+# # print("would you like to see visualization? Y/N ")
+# # isVisual = str(input())
+# # if isVisual.lower() == 'y':
+# #     isVisual = True
+# # else:
+# #     isVisual = False
+# # # read max time
+# # print("Please enter maximum run time (seconds)")
+# # maxRunTime = int(input())
+#
+# # read path to problem
+# print("Please enter path to problem file")
+# path = str(input())
+# # reading problem
+# algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
+#
+# # run on all
+# #runOnAll(maze,maxRunTime)
+#
+# # # run as requeusted
+#
+# algorithm, isHeuristic = getAlgorithmFromString(algorithmName,isVisual)
+# print("solving with "+algorithmName+", please wait...")
+# if isHeuristic is True:
+#     algorithm(maze, maxRunTime, "movesCount")
+# else:
+#     algorithm(maze, maxRunTime)
+#
+# print('')
+# print("PRESS ENTER TO EXIT")
+# input()

@@ -18,9 +18,9 @@ globalExploredCounter = 0
 
 def IDSVisual(maze, maxRunTime):
     global pen
-    pen = Pen(maze)
-    pen.maze_setup()
-    visual_counter = -5
+    pen = Pen.getInstance()
+    pen.maze_setup(maze)
+    visual_counter = 1
     visual_turns = 2
 
     # initialization
@@ -32,12 +32,11 @@ def IDSVisual(maze, maxRunTime):
     currentDepthLimit = -1
     startTime = time.time()
     while time.time() < (startTime + maxRunTime):
-
         currentDepthLimit += 1
         exploredCounter = 0
         # mark - reset all map
-        if currentDepthLimit > 2:
-            pen.clearstamps(-(len(pen.stampItems) - pen.num_of_setup_stamps))
+        pen.clearstamps(-(len(pen.stampItems) - pen.num_of_setup_stamps))
+        pen.mazeScreen.update()
         frontierPriorityQueue = HeapDict()
         frontierHashTable = {}
         exploredHashTable = {}
