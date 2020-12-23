@@ -1,4 +1,8 @@
 # this heuristic calculate how many moves is it to goal and tries to prefer diagonal moves.
+from Heuristics.MinimumMoves import HeuristicEvauluationSearch
+evalMovesMatrix = None
+evalMovesMatrixBackwards = None
+
 def diagonalHeuristic(x,y,goalNode):
 
     maxDistance = max(abs(x - goalNode.x),abs(y - goalNode.y))
@@ -11,13 +15,38 @@ def diagonalHeuristic(x,y,goalNode):
 
     return h
 
-
 # should be optimal for our config, this hueristic calculate the minimum moves to reach the goal node.
 def movesCountHeuristic(x, y, goalNode):
 
     dx = abs(x - goalNode.x)
     dy = abs(y - goalNode.y)
+    h = ((dx + dy) - min(dx, dy))
     return ((dx + dy) - min(dx, dy))
+
+# # should be optimal for our config, this hueristic calculate the minimum moves to reach the goal node.
+# def movesCountHeuristic(x, y, goalNode):
+#
+#     dx = abs(x - goalNode.x)
+#     dy = abs(y - goalNode.y)
+#     return ((dx + dy) - min(dx, dy))
+
+
+def minimumMovesBi(x,y,goal):
+    global evalMovesMatrixBackwards
+    return evalMovesMatrixBackwards[x][y]
+
+def minimumMoves(x,y,goal):
+    global evalMovesMatrix
+    return evalMovesMatrix[x][y]
+
+def calculateMinimumMovesMatrix(maze,goalNode):
+    global evalMovesMatrix
+    evalMovesMatrix = HeuristicEvauluationSearch(maze,goalNode)
+
+def calculateMinimumMovesMatrixBi(maze,goalNode):
+    global evalMovesMatrixBackwards
+    evalMovesMatrixBackwards = HeuristicEvauluationSearch(maze,goalNode)
+
 
 
 # string to function
@@ -27,6 +56,9 @@ def chooseHeuristic(heuristicName):
         return h
     elif heuristicName == 'diagonal':
         h = diagonalHeuristic
+        return h
+    elif heuristicName == 'minimumMoves':
+        h = minimumMoves
         return h
     else:
         return "ERROR"

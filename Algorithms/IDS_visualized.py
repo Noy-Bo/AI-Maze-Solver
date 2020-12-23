@@ -26,6 +26,8 @@ def IDSVisual(maze, maxRunTime):
     # initialization
     global currentDepthLimit
     global globalExploredCounter
+    currentDepthLimit = 0
+    globalExploredCounter = 0
     cutOffs = []
     isHeuristic = False
     startPoint = maze.startNode

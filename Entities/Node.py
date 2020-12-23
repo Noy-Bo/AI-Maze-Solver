@@ -10,6 +10,7 @@ class Node(object):
         self.depth = depth
         self.heuristicCost = heuristicCost
         self.childNodes = []
+        self.directionScore = 0
 
 
 

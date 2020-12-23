@@ -1,3 +1,4 @@
+import time
 from turtle import TurtleScreen, RawTurtle, Screen, RawPen, Turtle
 
 import Utilities
@@ -18,7 +19,43 @@ from tkinter import*
 from tkinter import ttk, filedialog
 
 from GUI.GUI_interface import GuiInterface
+from Heuristics.Heuristics import calculateMinimumMovesMatrix
+from Heuristics.MinimumMoves import HeuristicEvauluationSearch
 
+
+def getAlgorithmFromString(algorithmString, isVisual):
+    if algorithmString.lower() == "biastar":
+        if isVisual is True:
+            return BiAstarVisual, True
+        else:
+            return BiAstar, True
+
+    elif algorithmString.lower() == "astar":
+        if isVisual is True:
+            return AstarVisual, True
+        else:
+            return Astar, True
+
+    elif algorithmString.lower() == "idastar":
+        if isVisual is True:
+            return IDAstarVisual, True
+        else:
+            return IDAstar, True
+
+    elif algorithmString.lower() == "ids":
+        if isVisual is True:
+            return IDSVisual, False
+        else:
+            return IDS, False
+
+    elif algorithmString.lower() == "ucs":
+        if isVisual is True:
+            return UCSVisual, False
+        else:
+            return UCS, False
+
+    else:
+        return "ERROR"
 
 def runOnAll(maze, maxRunTime):
     # solving
@@ -67,20 +104,21 @@ def runOnAll(maze, maxRunTime):
     input()
 
 
+# ======= GUI INTERFACE
 gui = GuiInterface()
 gui.setupInterface()
 
 # ======================== main ========================
-# # ask if to visualize
-# # print("would you like to see visualization? Y/N ")
-# # isVisual = str(input())
-# # if isVisual.lower() == 'y':
-# #     isVisual = True
-# # else:
-# #     isVisual = False
-# # # read max time
-# # print("Please enter maximum run time (seconds)")
-# # maxRunTime = int(input())
+# ask if to visualize
+# print("would you like to see visualization? Y/N ")
+# isVisual = str(input())
+# if isVisual.lower() == 'y':
+#     isVisual = True
+# else:
+#     isVisual = False
+# # read max time
+# print("Please enter maximum run time (seconds)")
+# maxRunTime = int(input())
 #
 # # read path to problem
 # print("Please enter path to problem file")
@@ -88,6 +126,11 @@ gui.setupInterface()
 # # reading problem
 # algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
 #
+# #test
+# tick = time.time()
+# heuristicEvaluationMatrix = calculateMinimumMovesMatrix(maze,maze.goalNode)
+# tock = time.time() - tick
+# print(tock)
 # # run on all
 # #runOnAll(maze,maxRunTime)
 #
@@ -97,6 +140,7 @@ gui.setupInterface()
 # print("solving with "+algorithmName+", please wait...")
 # if isHeuristic is True:
 #     algorithm(maze, maxRunTime, "movesCount")
+#     algorithm(maze, maxRunTime, "minimumMoves")
 # else:
 #     algorithm(maze, maxRunTime)
 #

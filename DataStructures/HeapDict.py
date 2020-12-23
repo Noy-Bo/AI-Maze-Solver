@@ -24,6 +24,7 @@ class HeapDict(object):
     def decreaseKey(self, node,newPathCostWIthHeuristic,newHeuristicCost):
         self.heap[node] = (newPathCostWIthHeuristic,newHeuristicCost)
 
-
+    def accessSpecific(self,node):
+        return self.heap[node]
     def isEmpty(self):
         return len(self.heap) == 0

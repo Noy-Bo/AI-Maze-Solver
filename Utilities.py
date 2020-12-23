@@ -97,10 +97,13 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     global maxDepth
     global sumDepth
     global cutOffsCounter
-    cutOffsCounter = 0
-    minDepth = None
-    maxDepth = None
-    sumDepth = 0
+
+    # do not reset for idastar for its updating while running
+    if algorithmName.lower() != 'idastar':
+        cutOffsCounter = 0
+        minDepth = None
+        maxDepth = None
+        sumDepth = 0
 
     optimalSolutionCost = solutionNode.pathCost
     # BiAstar
@@ -146,57 +149,15 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
 
 
 
-    #calculating depth recursivly
+
+
+
+    # calculating depth recursivly
     if algorithmName.lower() == "biastar":
         calcDepthRecursive(backwardsStartNode)
     calcDepthRecursive(maze.startNode)
     avgDepth = sumDepth / cutOffsCounter
 
-
-    # backwardsSumDepth = 0
-    # if isinstance(frontierPriorityQueue,HeapDict) is True:
-    #     frontierCounter = len(frontierPriorityQueue.heap)
-    # elif isinstance(frontierPriorityQueue,PriorityQueue) is True:
-    #     frontierCounter = frontierPriorityQueue.count
-    # elif isinstance(frontierPriorityQueue,PriorityQueueDictionary) is True:
-    #     frontierCounter = frontierPriorityQueue.count
-    # else:
-    #     frontierCounter = len(frontierPriorityQueue)
-    #
-    # for i in range(0,frontierCounter):
-    #     node = frontierPriorityQueue.pop()
-    #     sumDepth += node.depth
-    #
-    #     if  minDepth == None and maxDepth == None:
-    #         minDepth = node.depth
-    #         maxDepth = node.depth
-    #     else:
-    #         if node.depth < minDepth:
-    #             minDepth = node.depth
-    #         if node.depth > maxDepth:
-    #             maxDepth = node.depth
-    #
-    # # BiAstar
-    # if backwardsNode is not None:
-    #     backwardsFrontierCounter = len(backwardsFrontierPriorityQueue.heap)
-    #     for i in range(0, backwardsFrontierCounter):
-    #         node = backwardsFrontierPriorityQueue.pop()
-    #         backwardsSumDepth += node.depth
-    #
-    #         if minDepth == None and maxDepth == None:
-    #             minDepth = node.depth
-    #             maxDepth = node.depth
-    #         else:
-    #             if node.depth < minDepth:
-    #                 minDepth = node.depth
-    #             if node.depth > maxDepth:
-    #                 maxDepth = node.depth
-    #
-    #     avgDepth = ((sumDepth / frontierCounter)  + (backwardsSumDepth  / backwardsFrontierCounter))/2
-    #
-    # #regular case
-    # else:
-    #     avgDepth = sumDepth / frontierCounter
 
     if solved is False:
         movesString = "-"
@@ -237,6 +198,12 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     print("min depth: {}".format(minDepth))
     print("average depth: {}".format(avgDepth))
     print("max depth: {}".format(maxDepth))
+
+    # reseting stats after finished running
+    cutOffsCounter = 0
+    minDepth = None
+    maxDepth = None
+    sumDepth = 0
 
     return
 

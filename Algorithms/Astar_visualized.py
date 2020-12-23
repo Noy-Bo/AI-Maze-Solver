@@ -2,7 +2,7 @@ import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
 from GUI.GUI import Pen
-from Heuristics.Heuristics import chooseHeuristic
+from Heuristics.Heuristics import chooseHeuristic, calculateMinimumMovesMatrix
 from Utilities import getCoordsFromDirection, evaluateStats
 
 
@@ -18,6 +18,14 @@ heuristicSum = 0
 
 
 def AstarVisual (maze,maxRunTime,heuristicName):
+
+    #starting the timer
+    startTime = time.time()
+
+    # checking if heuristic requires pre-processing
+    if heuristicName == "minimumMoves":
+        calculateMinimumMovesMatrix(maze, maze.goalNode)
+
     global pen
     pen = Pen.getInstance()
     pen.maze_setup(maze)
@@ -49,7 +57,7 @@ def AstarVisual (maze,maxRunTime,heuristicName):
     frontierPriorityQueue.push(startPoint)
 
     # Algorithm
-    startTime = time.time()
+
     while time.time() < (startTime + maxRunTime):
         if frontierPriorityQueue.isEmpty():
             return False
@@ -105,6 +113,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
         if maze.isValidMove(x,y):
             newNodeCost = maze.getCost(x, y)
             heuristicValue = heuristic(x,y,maze.goalNode)
+
             newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
 
             heuristicSum += heuristicValue
@@ -138,5 +147,26 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     frontierHashTable[newNode.key] = newNode
 
 
-
-
+#
+#
+# def estimateDirection(node):
+#     if node.fatherNode is None:
+#         return 1;
+#     if node.fatherNode.fatherNode is None:
+#         return 1;
+#     if node.fatherNode.fatherNode is None:
+#         return 1;
+#
+#     val = 1
+#     father = node.fatherNode
+#     grandFather = node.fatherNode
+#     grandGrandFather = node.fatherNode.fatherNode
+#
+#     if node.heuristicCost < father.heuristicCost:
+#         val -= 0.4
+#     if father.heuristicCost < grandFather.heuristicCost:
+#         val -= 0.3
+#     if grandFather.heuristicCost < grandGrandFather.heuristicCost:
+#         val -= 0.2
+#
+#     return val

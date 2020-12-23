@@ -107,10 +107,11 @@ class Pen(turtle.RawPen):
                 bi_node = bi_node.fatherNode
         for node in path:
             self.paint_tile(node.x, node.y, self.path_color, True)
-        # turtle.exitonclick()
-        # easteregg
+
+        #easteregg
         # self.goto(0,0)
         # self.color("black")
         # style = ('Arial', 70)
         # self.write("בומבה על הראש", font=style, align='center')
-        # turtle.done()
+        #turtle.done()
+        #turtle.exitonclick()

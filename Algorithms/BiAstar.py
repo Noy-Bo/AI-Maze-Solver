@@ -1,7 +1,7 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Heuristics.Heuristics import chooseHeuristic
+from Heuristics.Heuristics import chooseHeuristic, calculateMinimumMovesMatrixBi, calculateMinimumMovesMatrix
 from Utilities import getCoordsFromDirection, evaluateStats
 
 
@@ -19,7 +19,13 @@ heuristicSum = 0
 
 
 def BiAstar(maze,maxRunTime, heuristicName):
-    # initialization
+
+    # Algorithm
+    startTime = time.time()
+
+    # preprocessing for heuristic
+    calculateMinimumMovesMatrix(maze, maze.goalNode)
+    calculateMinimumMovesMatrixBi(maze, maze.startNode)
 
     isHeuristic = True
     exploredCounter = 0
@@ -59,7 +65,6 @@ def BiAstar(maze,maxRunTime, heuristicName):
     backwardsFrontierPriorityQueue.push(backwardsStartPoint)
 
     # Algorithm
-    startTime = time.time()
     while time.time() < (startTime + maxRunTime):
 
         if turn is True: # ============================= FRONT SEARCH TURN
@@ -159,11 +164,12 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
             newNodeCost = maze.getCost(x, y)
 
             # setting heuristic according to which search we are currently at.
-            if turn is True: #front search
+            if turn is True:  # front search
                 heuristicValue = heuristic(x, y, maze.goalNode)
-            elif turn is False: # backwards search
+                # heuristicValue = minimumMoves(x,y,maze.goalNode)
+            elif turn is False:  # backwards search
                 heuristicValue = heuristic(x, y, maze.startNode)
-
+                # heuristicValue = minimumMovesBi(x, y, maze.goalNode)
             newNode = Node(x, y, newNodeCost, node, node.pathCost + newNodeCost,
                            node.pathCost + newNodeCost + heuristicValue, node.depth + 1, heuristicValue)
 

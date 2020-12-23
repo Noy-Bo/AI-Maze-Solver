@@ -173,10 +173,11 @@ if __name__ == '__main__':
         newMaze[j][i] = random.randint(1,9)
       else:
         # decreasing num of walls
-        if random.randint(1,openScale) == 1 and ((j is not agent_X or i is not agent_Y) and (j is not goal_X or i is not goal_Y)):
-          newMaze[j][i] = -1
-        else:
+        if random.randint(1,openScale) == 1:
           newMaze[j][i] = random.randint(1, 9)
+        elif (j is not agent_X or i is not agent_Y) and (j is not goal_X or i is not goal_Y):
+          newMaze[j][i] = -1
+
 
   print("UCS")
   print(SIZE)
