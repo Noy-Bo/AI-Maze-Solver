@@ -62,7 +62,7 @@ def runOnAll(maze, maxRunTime):
     print("Solving with BiAstar, please wait...")
     BiAstar(maze, maxRunTime, 'movesCount')
     print('')
-    BiAstar(maze, maxRunTime, 'diagonal')
+    BiAstar(maze, maxRunTime, 'minimumMoves')
 
     print('')
     print(
@@ -71,7 +71,7 @@ def runOnAll(maze, maxRunTime):
     print("Solving with Astar, please wait...")
     Astar(maze, maxRunTime, 'movesCount')
     print('')
-    Astar(maze, maxRunTime, 'diagonal')
+    Astar(maze, maxRunTime, 'minimumMoves')
 
     print('')
     print(
@@ -87,7 +87,7 @@ def runOnAll(maze, maxRunTime):
     print("Solving with IDAstar, please wait...")
     IDAstar(maze, maxRunTime, 'movesCount')
     print('')
-    IDAstar(maze, maxRunTime, 'diagonal')
+    IDAstar(maze, maxRunTime, 'minimumMoves')
 
     print('')
     print(
@@ -110,32 +110,26 @@ gui.setupInterface()
 
 # ======================== main ========================
 # ask if to visualize
-# print("would you like to see visualization? Y/N ")
-# isVisual = str(input())
-# if isVisual.lower() == 'y':
-#     isVisual = True
-# else:
-#     isVisual = False
-# # read max time
-# print("Please enter maximum run time (seconds)")
-# maxRunTime = int(input())
-#
-# # read path to problem
-# print("Please enter path to problem file")
-# path = str(input())
-# # reading problem
-# algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
-#
-# #test
-# tick = time.time()
-# heuristicEvaluationMatrix = calculateMinimumMovesMatrix(maze,maze.goalNode)
-# tock = time.time() - tick
-# print(tock)
-# # run on all
-# #runOnAll(maze,maxRunTime)
-#
-# # # run as requeusted
-#
+print("would you like to see visualization? Y/N ")
+isVisual = str(input())
+if isVisual.lower() == 'y':
+    isVisual = True
+else:
+    isVisual = False
+# read max time
+print("Please enter maximum run time (seconds)")
+maxRunTime = int(input())
+
+# read path to problem
+print("Please enter path to problem file")
+path = str(input())
+# reading problem
+algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
+
+# run on all
+runOnAll(maze,maxRunTime)
+
+# # run as requeusted
 # algorithm, isHeuristic = getAlgorithmFromString(algorithmName,isVisual)
 # print("solving with "+algorithmName+", please wait...")
 # if isHeuristic is True:
@@ -143,7 +137,7 @@ gui.setupInterface()
 #     algorithm(maze, maxRunTime, "minimumMoves")
 # else:
 #     algorithm(maze, maxRunTime)
-#
-# print('')
-# print("PRESS ENTER TO EXIT")
-# input()
+
+print('')
+print("PRESS ENTER TO EXIT")
+input()

@@ -9,19 +9,22 @@ from Utilities import getCoordsFromDirection, evaluateStats
 #      this algorithm is searching the path from start to goal by evaluating
 #      heuristic cost + actual cost. the solution is guaranteed to be optimal
 
-
+h_time = 0
 heuristicCounter = 0
 heuristicSum = 0
 
 
 def Astar (maze,maxRunTime,heuristicName):
-
+    global h_time
     # starting the timer
     startTime = time.time()
 
     # checking if heuristic requires pre-processing
     if heuristicName == "minimumMoves":
+        tick = time.time()
         calculateMinimumMovesMatrix(maze, maze.goalNode)
+        tock = time.time() - tick
+        print("preprocessing time: {}".format(str(tock)))
 
     # initialization
     isHeuristic = True
@@ -64,6 +67,7 @@ def Astar (maze,maxRunTime,heuristicName):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
+            print("time to calculate heuritics: " + str(h_time) )
             evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter) )
             return True
 
@@ -83,6 +87,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
     global heuristicSum
     global heuristicCounter
+    global h_time
 
 
     # the expansion order is opposite because last element becomes first in the heap, thus it will expand in the right order
@@ -91,7 +96,9 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
         x,y = getCoordsFromDirection(direction, node.x, node.y)
         if maze.isValidMove(x,y):
             newNodeCost = maze.getCost(x, y)
+            tick = time.time()
             heuristicValue = heuristic(x,y,maze.goalNode)
+            h_time += time.time()-tick
             newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
             # test_val = estimateDirection(newNode)
             # heuristicValue *= test_val

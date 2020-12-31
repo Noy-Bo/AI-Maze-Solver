@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
   print("Enter maze size")
   SIZE = int(input())
-  print("Enter walls ratio: 1-9 (1 - maximum number of walls, 9 minimum number of walls)")
+  print("Enter walls ratio: 1-9 (1 - minimum number of walls, 9 maximum number of walls)")
   openScale = int(input())
   print("Enter starting point, x coordinate (1+)")
   agent_X = int(input())

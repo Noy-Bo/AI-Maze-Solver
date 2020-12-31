@@ -25,6 +25,7 @@ class Pen(turtle.RawPen):
         self.wall_color = "#424242"
         self.path_color = "#D32F2F"
         self.light_green = '#DCE775'
+        self.orange = '#FF6D00'
         self.dark_green = '#43A047'
         self.num_of_setup_stamps = 0
 

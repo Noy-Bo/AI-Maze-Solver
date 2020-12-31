@@ -1,3 +1,4 @@
+import copy
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
@@ -16,9 +17,11 @@ from Utilities import getCoordsFromDirection, evaluateStats
 
 heuristicCounter = 0
 heuristicSum = 0
-
-
+global forwardContinue
+global backwardsContinue
+global turn
 def BiAstar(maze,maxRunTime, heuristicName):
+
 
     # Algorithm
     startTime = time.time()
@@ -32,6 +35,9 @@ def BiAstar(maze,maxRunTime, heuristicName):
     heuristic = chooseHeuristic(heuristicName)
     global heuristicSum
     global heuristicCounter
+    global forwardContinue
+    global backwardsContinue
+    global turn
     heuristicCounter = 0
     heuristicSum = 0
     startPoint = maze.startNode
@@ -64,13 +70,33 @@ def BiAstar(maze,maxRunTime, heuristicName):
     backwardsFrontierHashTable[backwardsStartPoint.key] = backwardsStartPoint
     backwardsFrontierPriorityQueue.push(backwardsStartPoint)
 
+    forwardContinue = True
+    backwardsContinue = True
+    intersected = False
+    optimalPathCost = None
+
+    forwardSolutionNode = None
+    backwardsSolutionNode = None
     # Algorithm
     while time.time() < (startTime + maxRunTime):
 
-        if turn is True: # ============================= FRONT SEARCH TURN
+        # checking the optimal step to stop.
+        if intersected is True and backwardsFrontierPriorityQueue.isEmpty() is False and frontierPriorityQueue.isEmpty() is False and stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),optimalPathCost) is True:
+            # stop the timer
+            runTime = time.time() - startTime
+
+            evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter,
+                          runTime, isHeuristic,
+                          heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                          backwardsFrontierPriorityQueue, backwardsStartPoint)
+            return True
+
+
+        if (turn is True and forwardContinue is True) or (turn is False and backwardsContinue is False): # ============================= FRONT SEARCH TURN
 
             if frontierPriorityQueue.isEmpty():
                 return False
+
 
             # deleting node from frontierPriorityQueue
             node = frontierPriorityQueue.pop()
@@ -82,30 +108,43 @@ def BiAstar(maze,maxRunTime, heuristicName):
 
             # checking if we hit the solution
             if isIntersecting(node,backwardsFrontierHashTable,backwardsExploredHashTable):
-                # stop the timer
-                runTime = time.time() - startTime
 
-                # retrieve coliding node from backward search
-                if node.key in backwardsFrontierHashTable:
-                    backwardsNode = backwardsFrontierHashTable[node.key]
-                elif node.key in backwardsExploredHashTable:
-                    backwardsNode = backwardsExploredHashTable[node.key]
-                else:
-                    print("Error")
-                    return False
+                if intersected == True:
+                    if node.key in backwardsFrontierHashTable:
+                        tmpBackwardsSolutionNode = backwardsFrontierHashTable[node.key]
+                    elif node.key in backwardsExploredHashTable:
+                        tmpBackwardsSolutionNode = backwardsExploredHashTable[node.key]
 
-                evaluateStats('BiAstar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),backwardsNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
-                return True
 
-            if node.key not in exploredHashTable:
-                exploredCounter += 1
+                if intersected is False or (node.pathCost + tmpBackwardsSolutionNode.pathCost - node.cost) < (
+                            forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost):
+                    intersected = True
+                    forwardSolutionNode = copy.copy(node)
+                    # retrieve coliding node from backward search
+                    if node.key in backwardsFrontierHashTable:
+                        backwardsSolutionNode = copy.copy(backwardsFrontierHashTable[node.key])
+                    elif node.key in backwardsExploredHashTable:
+                        backwardsSolutionNode = copy.copy(backwardsExploredHashTable[node.key])
+
+
+                    optimalPathCost = forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost
+                    if stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),optimalPathCost) is True:
+                        # stop the timer
+                        runTime = time.time() - startTime
+
+                        evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                                      heuristicName, (heuristicSum / heuristicCounter),backwardsSolutionNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                        return True
+
+
+           # if node.key not in exploredHashTable:
+            exploredCounter += 1
             exploredHashTable[node.key] = node
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,turn,heuristic)
 
             turn = False
 
-        elif turn is False: # ================================ BACKWARDS SEARCH TURN
+        elif (turn is False and backwardsContinue is True) or (turn is True and forwardContinue is False): # ================================ BACKWARDS SEARCH TURN
 
             if backwardsFrontierPriorityQueue.isEmpty():
                 return False
@@ -120,25 +159,36 @@ def BiAstar(maze,maxRunTime, heuristicName):
 
             # checking if we hit the solution
             if isIntersecting(node,frontierHashTable,exploredHashTable):
-                # stop the timer
-                runTime = time.time() - startTime
 
-                # retrieve coliding node from front search
-                if node.key in frontierHashTable:
-                    frontierNode = frontierHashTable[node.key]
-                elif node.key in exploredHashTable:
-                    frontiernode = exploredHashTable[node.key]
-                else:
-                    print("Error")
-                    return False
+                if intersected == True:
+                    if node.key in frontierHashTable:
+                        tmpForwardSolutionNode = frontierHashTable[node.key]
+                    elif node.key in exploredHashTable:
+                        tmpForwardSolutionNode = exploredHashTable[node.key]
 
-                evaluateStats('BiAstar', maze, True, frontierNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
-                return True
+                if intersected is False or (node.pathCost + tmpForwardSolutionNode.pathCost - node.cost) < (
+                        forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost):
+                    intersected = True
+                    backwardsSolutionNode = copy.copy(node)
+                    # retrieve coliding node from front search
+                    if node.key in frontierHashTable:
+                        forwardSolutionNode = copy.copy(frontierHashTable[node.key])
+                    elif node.key in exploredHashTable:
+                        forwardSolutionNode = copy.copy(exploredHashTable[node.key])
+
+
+                    optimalPathCost = forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost
+                    if stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),optimalPathCost) is True:
+                        # stop the timer
+                        runTime = time.time() - startTime
+
+                        evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                                  heuristicName, (heuristicSum / heuristicCounter),backwardsSolutionNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                        return True
 
             #if node.key not in backwardsExploredHashTable:
             exploredCounter += 1
-            backwardsFrontierHashTable[node.key] = node
+            backwardsExploredHashTable[node.key] = node
             expandNode(maze, node,backwardsFrontierPriorityQueue,backwardsFrontierHashTable,backwardsExploredHashTable,turn,heuristic)
 
             turn = True
@@ -210,6 +260,23 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
 # checking if a node is reached in the other search.
 def isIntersecting(node,frontierHashTable, exploredHashTable):
 
-    if node.key in frontierHashTable or node.key in exploredHashTable:
+    if node.key in exploredHashTable or node.key in frontierHashTable:
         return True
     return False
+
+
+
+def stopCondition(lowestForward,lowestBackwards,optPathCost):
+    global forwardContinue
+    global backwardsContinue
+    global turn
+    if forwardContinue is True and optPathCost <= lowestForward.pathCostWithHeuristic:
+        forwardContinue = False
+
+    if backwardsContinue is True and optPathCost <= lowestBackwards.pathCostWithHeuristic:
+        backwardsContinue = False
+
+    if backwardsContinue is False and forwardContinue is False:
+        return True
+    return False
+

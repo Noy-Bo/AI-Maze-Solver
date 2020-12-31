@@ -15,6 +15,7 @@ globalExploredCounter = 0
 heuristicCounter = 0
 heuristicSum = 0
 
+
 def IDAstar (maze,maxRunTime,heuristicName):
 
     # starting the timer
