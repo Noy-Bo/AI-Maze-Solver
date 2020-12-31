@@ -80,7 +80,8 @@ class GuiInterface(object):
         algorithm, isHeuristic = self.getAlgorithmFromString(self.combo.get(), self.visualCheckBox.get())
         self.textBox.set("solving with " + self.combo.get() + ", please wait...")
         if isHeuristic is True:
-            algorithm(maze, maxRunTime, "movesCount")
+            algorithm(maze, maxRunTime, "minimumMoves")
+            #algorithm(maze, maxRunTime, "movesCount")
         else:
             algorithm(maze, maxRunTime)
         self.textBox.set("Finished running. See OutputResult.txt for results")

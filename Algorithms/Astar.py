@@ -1,7 +1,7 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Heuristics.Heuristics import chooseHeuristic
+from Heuristics.Heuristics import chooseHeuristic, calculateMinimumMovesMatrix
 from Utilities import getCoordsFromDirection, evaluateStats
 
 # this was programmed using 'AI modern approach' pseudo code for Astar algorithm.
@@ -9,12 +9,23 @@ from Utilities import getCoordsFromDirection, evaluateStats
 #      this algorithm is searching the path from start to goal by evaluating
 #      heuristic cost + actual cost. the solution is guaranteed to be optimal
 
-
+h_time = 0
 heuristicCounter = 0
 heuristicSum = 0
 
 
 def Astar (maze,maxRunTime,heuristicName):
+    global h_time
+    # starting the timer
+    startTime = time.time()
+
+    # checking if heuristic requires pre-processing
+    if heuristicName == "minimumMoves":
+        tick = time.time()
+        calculateMinimumMovesMatrix(maze, maze.goalNode)
+        tock = time.time() - tick
+        print("preprocessing time: {}".format(str(tock)))
+
     # initialization
     isHeuristic = True
     heuristic = chooseHeuristic(heuristicName)
@@ -40,7 +51,6 @@ def Astar (maze,maxRunTime,heuristicName):
     frontierPriorityQueue.push(startPoint)
 
     # Algorithm
-    startTime = time.time()
     while time.time() < (startTime + maxRunTime):
         if frontierPriorityQueue.isEmpty():
             return False
@@ -57,6 +67,7 @@ def Astar (maze,maxRunTime,heuristicName):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
+            print("time to calculate heuritics: " + str(h_time) )
             evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter) )
             return True
 
@@ -76,6 +87,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
     global heuristicSum
     global heuristicCounter
+    global h_time
 
 
     # the expansion order is opposite because last element becomes first in the heap, thus it will expand in the right order
@@ -84,8 +96,14 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
         x,y = getCoordsFromDirection(direction, node.x, node.y)
         if maze.isValidMove(x,y):
             newNodeCost = maze.getCost(x, y)
+            tick = time.time()
             heuristicValue = heuristic(x,y,maze.goalNode)
+            h_time += time.time()-tick
             newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
+            # test_val = estimateDirection(newNode)
+            # heuristicValue *= test_val
+            # newNode.heuristicCost = heuristicValue
+            # newNode.pathCostWithHeuristic = newNode.pathCost + heuristicValue
 
             heuristicSum += heuristicValue
             heuristicCounter += 1
@@ -108,13 +126,45 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     frontierHashTable[newNode.key] = newNode
 
             # node in explored and not in frontier
-            elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:
-                if newNode.pathCost < exploredHashTable[newNode.key].pathCost or\
-                        (newNode.pathCost == exploredHashTable[newNode.key].pathCost and newNode.pathCostWithHeuristic < exploredHashTable[
-                            newNode.key].pathCostWithHeuristic):
-                    frontierPriorityQueue.push(newNode)
-                    frontierHashTable[newNode.key] = newNode
+            # elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:
+            #     if newNode.pathCost < exploredHashTable[newNode.key].pathCost or\
+            #             (newNode.pathCost == exploredHashTable[newNode.key].pathCost and newNode.pathCostWithHeuristic < exploredHashTable[
+            #                 newNode.key].pathCostWithHeuristic):
+            #         frontierPriorityQueue.push(newNode)
+            #         frontierHashTable[newNode.key] = newNode
 
 
 
 
+#
+#
+# def estimateDirection(node):
+#     if node.fatherNode is None:
+#         return 1;
+#     if node.fatherNode.fatherNode is None:
+#         return 1;
+#     if node.fatherNode.fatherNode is None:
+#         return 1;
+#
+#     towardsGoal = 0
+#     father = node.fatherNode
+#     grandFather = node.fatherNode
+#     grandGrandFather = node.fatherNode.fatherNode
+#
+#     if node.heuristicCost < father.heuristicCost:
+#         towardsGoal +=1
+#     if father.heuristicCost < grandFather.heuristicCost:
+#         towardsGoal +=1
+#     if grandFather.heuristicCost < grandGrandFather.heuristicCost:
+#         towardsGoal +=1
+#
+#     if towardsGoal == 0:
+#         return 1
+#     elif towardsGoal == 1:
+#         return 0.8
+#     elif towardsGoal == 2:
+#         return 0.5
+#     elif towardsGoal == 3:
+#         return 0.1
+#
+#     return 1

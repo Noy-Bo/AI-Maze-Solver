@@ -1,4 +1,4 @@
-biastar
+astar
 30
 0,0
 29,29

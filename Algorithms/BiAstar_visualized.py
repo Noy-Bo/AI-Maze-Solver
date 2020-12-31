@@ -1,10 +1,12 @@
+
+
+import copy
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Heuristics.Heuristics import chooseHeuristic
-from Utilities import getCoordsFromDirection, evaluateStats
 from GUI.GUI import Pen
-
+from Heuristics.Heuristics import chooseHeuristic, calculateMinimumMovesMatrixBi, calculateMinimumMovesMatrix
+from Utilities import getCoordsFromDirection, evaluateStats
 
 # this was programmed using 'AI modern approach' pseudo code for Bidirectional algorithm.
 #                      @@@@ BiAstar algorithm. @@@
@@ -13,12 +15,18 @@ from GUI.GUI import Pen
 #       Note - BiAstar doesnt guarantee to return optimal solution
 
 
-pen = None
 heuristicCounter = 0
 heuristicSum = 0
+global forwardContinue
+global backwardsContinue
+global turn
+pen = None
 
 
-def BiAstarVisual(maze,maxRunTime, heuristicName):
+def BiAstarVisual(maze, maxRunTime, heuristicName):
+    # Algorithm
+    startTime = time.time()
+
     global pen
     pen = Pen.getInstance()
     pen.maze_setup(maze)
@@ -26,11 +34,18 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
     visual_turns = 2
     # initialization
 
+    # preprocessing for heuristic
+    calculateMinimumMovesMatrix(maze, maze.goalNode)
+    calculateMinimumMovesMatrixBi(maze, maze.startNode)
+
     isHeuristic = True
     exploredCounter = 0
     heuristic = chooseHeuristic(heuristicName)
     global heuristicSum
     global heuristicCounter
+    global forwardContinue
+    global backwardsContinue
+    global turn
     heuristicCounter = 0
     heuristicSum = 0
     startPoint = maze.startNode
@@ -51,10 +66,9 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
     startPoint.pathCostWithHeuristic = startPoint.pathCost + startPoint.heuristicCost
 
     # creating startpoint of backwards search
-    backwardsStartPoint = Node(maze.goalNode.x,maze.goalNode.y,maze.goalNode.cost,None,maze.goalNode.cost,
-                               heuristic(maze.goalNode.x,maze.goalNode.y,startPoint)+maze.goalNode.cost,0,
-                               heuristic(maze.goalNode.x,maze.goalNode.y,startPoint))
-
+    backwardsStartPoint = Node(maze.goalNode.x, maze.goalNode.y, maze.goalNode.cost, None, maze.goalNode.cost,
+                               heuristic(maze.goalNode.x, maze.goalNode.y, startPoint) + maze.goalNode.cost, 0,
+                               heuristic(maze.goalNode.x, maze.goalNode.y, startPoint))
 
     # inserting first node at for both searches
     frontierHashTable[startPoint.key] = startPoint
@@ -63,11 +77,33 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
     backwardsFrontierHashTable[backwardsStartPoint.key] = backwardsStartPoint
     backwardsFrontierPriorityQueue.push(backwardsStartPoint)
 
+    forwardContinue = True
+    backwardsContinue = True
+    intersected = False
+    optimalPathCost = None
+
+    forwardSolutionNode = None
+    backwardsSolutionNode = None
     # Algorithm
-    startTime = time.time()
     while time.time() < (startTime + maxRunTime):
 
-        if turn is True: # ============================= FRONT SEARCH TURN
+        # checking the optimal step to stop.
+        if intersected is True and backwardsFrontierPriorityQueue.isEmpty() is False and frontierPriorityQueue.isEmpty() is False and stopCondition(
+                frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(), optimalPathCost) is True:
+            # stop the timer
+            runTime = time.time() - startTime
+
+            # mark - print path
+            pen.paint_path(forwardSolutionNode, backwardsSolutionNode)
+
+            evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter,
+                          runTime, isHeuristic,
+                          heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                          backwardsFrontierPriorityQueue, backwardsStartPoint)
+            return True
+
+        if (turn is True and forwardContinue is True) or (
+                turn is False and backwardsContinue is False):  # ============================= FRONT SEARCH TURN
 
             if frontierPriorityQueue.isEmpty():
                 return False
@@ -81,30 +117,40 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
                 node.fatherNode.childNodes.append(node)
 
             # checking if we hit the solution
-            if isIntersecting(node,backwardsFrontierHashTable,backwardsExploredHashTable):
-                # stop the timer
-                runTime = time.time() - startTime
+            if isIntersecting(node, backwardsFrontierHashTable, backwardsExploredHashTable):
 
-                # retrieve coliding node from backward search
-                if node.key in backwardsFrontierHashTable:
-                    backwardsNode = backwardsFrontierHashTable[node.key]
-                elif node.key in backwardsExploredHashTable:
-                    backwardsNode = backwardsExploredHashTable[node.key]
-                else:
-                    print("Error")
-                    return False
+                if intersected == True:
+                    if node.key in backwardsFrontierHashTable:
+                        tmpBackwardsSolutionNode = backwardsFrontierHashTable[node.key]
+                    elif node.key in backwardsExploredHashTable:
+                        tmpBackwardsSolutionNode = backwardsExploredHashTable[node.key]
 
-                # mark - print path
-                pen.paint_path(node, backwardsNode)
+                if intersected is False or (node.pathCost + tmpBackwardsSolutionNode.pathCost - node.cost) < (
+                        forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost):
+                    intersected = True
+                    forwardSolutionNode = copy.copy(node)
+                    # retrieve coliding node from backward search
+                    if node.key in backwardsFrontierHashTable:
+                        backwardsSolutionNode = copy.copy(backwardsFrontierHashTable[node.key])
+                    elif node.key in backwardsExploredHashTable:
+                        backwardsSolutionNode = copy.copy(backwardsExploredHashTable[node.key])
 
-                evaluateStats('BiAstar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),backwardsNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
-                return True
+                    optimalPathCost = forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost
+                    if stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),
+                                     optimalPathCost) is True:
+                        # stop the timer
+                        runTime = time.time() - startTime
 
-            if node.key not in exploredHashTable:
-                exploredCounter += 1
+                        evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue,
+                                      exploredCounter, runTime, isHeuristic,
+                                      heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                                      backwardsFrontierPriorityQueue, backwardsStartPoint)
+                        return True
+
+            # if node.key not in exploredHashTable:
+            exploredCounter += 1
             exploredHashTable[node.key] = node
-            expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable,turn,heuristic)
+            expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, turn, heuristic,backwardsFrontierHashTable,backwardsExploredHashTable)
 
             # mark - expanding node, node.x/node.y - hard yellow
             visual_counter += 1
@@ -119,7 +165,8 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
 
             turn = False
 
-        elif turn is False: # ================================ BACKWARDS SEARCH TURN
+        elif (turn is False and backwardsContinue is True) or (
+                turn is True and forwardContinue is False):  # ================================ BACKWARDS SEARCH TURN
 
             if backwardsFrontierPriorityQueue.isEmpty():
                 return False
@@ -133,28 +180,45 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
                 node.fatherNode.childNodes.append(node)
 
             # checking if we hit the solution
-            if isIntersecting(node,frontierHashTable,exploredHashTable):
-                # stop the timer
-                runTime = time.time() - startTime
+            if isIntersecting(node, frontierHashTable, exploredHashTable):
 
-                # retrieve coliding node from front search
-                if node.key in frontierHashTable:
-                    frontierNode = frontierHashTable[node.key]
-                elif node.key in exploredHashTable:
-                    frontiernode = exploredHashTable[node.key]
-                else:
-                    print("Error")
-                    return False
+                if intersected == True:
+                    if node.key in frontierHashTable:
+                        tmpForwardSolutionNode = frontierHashTable[node.key]
+                    elif node.key in exploredHashTable:
+                        tmpForwardSolutionNode = exploredHashTable[node.key]
 
-                # mark - print path
-                pen.paint_path(frontierNode, node)
+                if intersected is False or (node.pathCost + tmpForwardSolutionNode.pathCost - node.cost) < (
+                        forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost):
+                    intersected = True
+                    backwardsSolutionNode = copy.copy(node)
+                    # retrieve coliding node from front search
+                    if node.key in frontierHashTable:
+                        forwardSolutionNode = copy.copy(frontierHashTable[node.key])
+                    elif node.key in exploredHashTable:
+                        forwardSolutionNode = copy.copy(exploredHashTable[node.key])
 
-                evaluateStats('BiAstar', maze, True, frontierNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
-                return True
+                    optimalPathCost = forwardSolutionNode.pathCost + backwardsSolutionNode.pathCost - forwardSolutionNode.cost
+                    if stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),
+                                     optimalPathCost) is True:
+                        # stop the timer
+                        runTime = time.time() - startTime
 
-            #if node.key not in backwardsExploredHashTable:
+                        # mark - print path
+                        pen.paint_path(forwardSolutionNode, backwardsSolutionNode)
+
+                        evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue,
+                                      exploredCounter, runTime, isHeuristic,
+                                      heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                                      backwardsFrontierPriorityQueue, backwardsStartPoint)
+                        return True
+
+            # if node.key not in backwardsExploredHashTable:
             exploredCounter += 1
+
+            backwardsExploredHashTable[node.key] = node
+            expandNode(maze, node, backwardsFrontierPriorityQueue, backwardsFrontierHashTable,
+                       backwardsExploredHashTable, turn, heuristic,frontierHashTable,exploredHashTable)
 
             # mark - expanding node, node.x/node.y - hard yellow
             visual_counter += 1
@@ -167,21 +231,18 @@ def BiAstarVisual(maze,maxRunTime, heuristicName):
             else:
                 pen.paint_tile(node.x, node.y, pen.dark_green, False)
 
-            backwardsFrontierHashTable[node.key] = node
-            expandNode(maze, node,backwardsFrontierPriorityQueue,backwardsFrontierHashTable,backwardsExploredHashTable,turn,heuristic)
-
             turn = True
-
 
     # time's up!
     runTime = time.time() - startTime
     evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                  heuristicName, (heuristicSum / heuristicCounter), node, backwardsFrontierPriorityQueue,
+                  backwardsStartPoint)
     return False
 
 
 # this functions receives a node and expand it in order to all direction, inserting the new expanded nodes into frontierPriorityQueue aswell.
-def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHashTable,turn,heuristic):
+def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, turn, heuristic,othersideFrontHash,othersideExploredHash):
     global heuristicSum
     global heuristicCounter
 
@@ -193,11 +254,12 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
             newNodeCost = maze.getCost(x, y)
 
             # setting heuristic according to which search we are currently at.
-            if turn is True: #front search
+            if turn is True:  # front search
                 heuristicValue = heuristic(x, y, maze.goalNode)
-            elif turn is False: # backwards search
+                # heuristicValue = minimumMoves(x,y,maze.goalNode)
+            elif turn is False:  # backwards search
                 heuristicValue = heuristic(x, y, maze.startNode)
-
+                # heuristicValue = minimumMovesBi(x, y, maze.goalNode)
             newNode = Node(x, y, newNodeCost, node, node.pathCost + newNodeCost,
                            node.pathCost + newNodeCost + heuristicValue, node.depth + 1, heuristicValue)
 
@@ -207,7 +269,13 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
             # new node, insert it to PQ and Hashtable
             if newNode.key not in exploredHashTable and newNode.key not in frontierHashTable:
                 # mark - node valid, we're only looking at it - yellow
-                pen.paint_tile(newNode.x, newNode.y, pen.light_green, False)
+                if newNode.key not in othersideExploredHash and  newNode.key not in othersideFrontHash:
+                    pen.paint_tile(newNode.x, newNode.y, pen.light_green, False)
+                else:
+                    pen.paint_tile(newNode.x, newNode.y, pen.orange, False)
+                frontierPriorityQueue.push(newNode)
+                frontierHashTable[newNode.key] = newNode
+
                 frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
 
@@ -217,7 +285,6 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
                         newNode.pathCostWithHeuristic == frontierHashTable[
                     newNode.key].pathCostWithHeuristic and newNode.heuristicCost < frontierHashTable[
                             newNode.key].heuristicCost):
-
                     frontierPriorityQueue.popSpecific(frontierHashTable[newNode.key])
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
@@ -232,13 +299,54 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable,exploredHash
                     frontierHashTable[newNode.key] = newNode
 
 
-
-
-
-
 # checking if a node is reached in the other search.
-def isIntersecting(node,frontierHashTable, exploredHashTable):
-
-    if node.key in frontierHashTable or node.key in exploredHashTable:
+def isIntersecting(node, frontierHashTable, exploredHashTable):
+    if node.key in exploredHashTable :
         return True
     return False
+
+#
+# def stopCondition(lowestForward, lowestBackwards, optPathCost):
+#     global forwardContinue
+#     global backwardsContinue
+#     global turn
+#     if forwardContinue is True and optPathCost <= lowestForward.pathCostWithHeuristic:
+#         forwardContinue = False
+#
+#     if backwardsContinue is True and optPathCost <= lowestBackwards.pathCostWithHeuristic:
+#         backwardsContinue = False
+#
+#     if backwardsContinue is False and forwardContinue is False:
+#         return True
+#     return False
+
+#
+# def stopCondition(lowestForward, lowestBackwards, optPathCost):
+#     global forwardContinue
+#     global backwardsContinue
+#     global turn
+#     if forwardContinue is True and optPathCost <= lowestForward.pathCostWithHeuristic:
+#         forwardContinue = False
+#
+#     if backwardsContinue is True and optPathCost <= lowestBackwards.pathCostWithHeuristic:
+#         backwardsContinue = False
+#
+#     if backwardsContinue is False and forwardContinue is False:
+#         return True
+#     return False
+
+
+def stopCondition(lowestForward,lowestBackwards,optPathCost):
+    global forwardContinue
+    global backwardsContinue
+    global turn
+    if forwardContinue is True and optPathCost <= lowestForward.pathCostWithHeuristic:
+        forwardContinue = False
+
+    if backwardsContinue is True and optPathCost <= lowestBackwards.pathCostWithHeuristic:
+        backwardsContinue = False
+
+    if backwardsContinue is False and forwardContinue is False:
+        return True
+    return False
+

@@ -25,6 +25,7 @@ class Pen(turtle.RawPen):
         self.wall_color = "#424242"
         self.path_color = "#D32F2F"
         self.light_green = '#DCE775'
+        self.orange = '#FF6D00'
         self.dark_green = '#43A047'
         self.num_of_setup_stamps = 0
 
@@ -107,10 +108,11 @@ class Pen(turtle.RawPen):
                 bi_node = bi_node.fatherNode
         for node in path:
             self.paint_tile(node.x, node.y, self.path_color, True)
-        # turtle.exitonclick()
-        # easteregg
+
+        #easteregg
         # self.goto(0,0)
         # self.color("black")
         # style = ('Arial', 70)
         # self.write("בומבה על הראש", font=style, align='center')
-        # turtle.done()
+        #turtle.done()
+        #turtle.exitonclick()

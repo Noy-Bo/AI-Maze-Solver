@@ -1,8 +1,8 @@
 import time
-from Heuristics.Heuristics import  chooseHeuristic
+from Heuristics.Heuristics import chooseHeuristic, calculateMinimumMovesMatrix
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Utilities import getCoordsFromDirection, evaluateStats
+from Utilities import getCoordsFromDirection, evaluateStats, calcDepthRecursive
 
 # this  algorithm was programmed using 'AI modern approach' pseudo code for IDS algorithm.
 #            @@@@ Iterative deepening search algorithm. @@@@
@@ -15,19 +15,35 @@ globalExploredCounter = 0
 heuristicCounter = 0
 heuristicSum = 0
 
+
 def IDAstar (maze,maxRunTime,heuristicName):
+
+    # starting the timer
+    startTime = time.time()
+
+    # checking if heuristic requires pre-processing
+    if heuristicName == "minimumMoves":
+        calculateMinimumMovesMatrix(maze, maze.goalNode)
+
     # initialization
     global currentFLimit
     global globalExploredCounter
     global heuristicSum
     global heuristicCounter
+
+    currentFLimit = 0
+    globalExploredCounter = 0
+    heuristicSum = 0
+    heuristicCounter = 0
+
     heuristic = chooseHeuristic(heuristicName)
     startPoint = maze.startNode
     cutOffs = []
     isHeuristic = True
     currentFLimit = 0
-    startTime = time.time()
     while time.time() < (startTime + maxRunTime):
+        #calculating on the run
+        calcDepthRecursive(startPoint)
 
         currentFLimit += 1
         exploredCounter = 0
