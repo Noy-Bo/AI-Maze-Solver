@@ -1,16 +1,5 @@
 from pqdict import minpq
 
-# pq = minpq()
-# pq['noy'] = 5
-# pq['dana'] = 6
-#
-# #del pq['noy']
-# n = pq.pop()
-#
-#
-#
-# print("end")
-
 
 # NOTE - this ia a *min* heap.
 

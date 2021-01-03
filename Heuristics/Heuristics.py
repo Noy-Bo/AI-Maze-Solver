@@ -2,6 +2,11 @@
 from Heuristics.MinimumMoves import HeuristicEvauluationSearch
 evalMovesMatrix = None
 evalMovesMatrixBackwards = None
+minVal = None
+
+def updateMinVal(val):
+    global minVal
+    minVal = val
 
 def diagonalHeuristic(x,y,goalNode):
 
@@ -33,19 +38,22 @@ def movesCountHeuristic(x, y, goalNode):
 
 def minimumMovesBi(x,y,goal):
     global evalMovesMatrixBackwards
-    return evalMovesMatrixBackwards[x][y]
+    return evalMovesMatrixBackwards[x][y] * minVal
 
 def minimumMoves(x,y,goal):
     global evalMovesMatrix
-    return evalMovesMatrix[x][y]
+    global minVal
+    return evalMovesMatrix[x][y] * minVal
 
 def calculateMinimumMovesMatrix(maze,goalNode):
     global evalMovesMatrix
-    evalMovesMatrix = HeuristicEvauluationSearch(maze,goalNode)
+    global minVal
+    evalMovesMatrix,val = HeuristicEvauluationSearch(maze,goalNode)
+    minVal = val
 
 def calculateMinimumMovesMatrixBi(maze,goalNode):
     global evalMovesMatrixBackwards
-    evalMovesMatrixBackwards = HeuristicEvauluationSearch(maze,goalNode)
+    evalMovesMatrixBackwards,v = HeuristicEvauluationSearch(maze,goalNode)
 
 
 

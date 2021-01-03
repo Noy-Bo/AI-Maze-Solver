@@ -21,10 +21,8 @@ def Astar (maze,maxRunTime,heuristicName):
 
     # checking if heuristic requires pre-processing
     if heuristicName == "minimumMoves":
-        tick = time.time()
         calculateMinimumMovesMatrix(maze, maze.goalNode)
-        tock = time.time() - tick
-        print("preprocessing time: {}".format(str(tock)))
+
 
     # initialization
     isHeuristic = True

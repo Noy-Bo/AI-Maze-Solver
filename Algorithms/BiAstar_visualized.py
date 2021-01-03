@@ -35,8 +35,9 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
     # initialization
 
     # preprocessing for heuristic
-    calculateMinimumMovesMatrix(maze, maze.goalNode)
-    calculateMinimumMovesMatrixBi(maze, maze.startNode)
+    if heuristicName == "minimumMoves":
+        calculateMinimumMovesMatrix(maze, maze.goalNode)
+        calculateMinimumMovesMatrixBi(maze, maze.startNode)
 
     isHeuristic = True
     exploredCounter = 0

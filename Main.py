@@ -1,26 +1,18 @@
-import time
-from turtle import TurtleScreen, RawTurtle, Screen, RawPen, Turtle
-
 import Utilities
 from Algorithms.Astar import Astar
-
 from Algorithms.Astar_visualized import AstarVisual
 from Algorithms.BiAstar import BiAstar
 from Algorithms.IDAstar import IDAstar
 from Algorithms.IDAstar_visualized import IDAstarVisual
-
 from Algorithms.BiAstar_visualized import BiAstarVisual
 from Algorithms.IDS import IDS
 from Algorithms.IDS_visualized import IDSVisual
 from Algorithms.UCS import UCS
 from Algorithms.UCS_visualized import UCSVisual
 
-from tkinter import*
-from tkinter import ttk, filedialog
 
-from GUI.GUI_interface import GuiInterface
-from Heuristics.Heuristics import calculateMinimumMovesMatrix
-from Heuristics.MinimumMoves import HeuristicEvauluationSearch
+
+
 
 
 def getAlgorithmFromString(algorithmString, isVisual):
@@ -103,20 +95,20 @@ def runOnAll(maze, maxRunTime):
     print("PRESS ENTER TO EXIT")
     input()
 
-
-# ======= GUI INTERFACE
-gui = GuiInterface()
-gui.setupInterface()
+#
+# # # ======= GUI INTERFACE
+# gui = GuiInterface()
+# gui.setupInterface()
 
 # ======================== main ========================
 # ask if to visualize
-print("would you like to see visualization? Y/N ")
-isVisual = str(input())
-if isVisual.lower() == 'y':
-    isVisual = True
-else:
-    isVisual = False
-# read max time
+# print("would you like to see visualization? Y/N ")
+# isVisual = str(input())
+# if isVisual.lower() == 'y':
+#     isVisual = True
+# else:
+#     isVisual = False
+# # read max time
 print("Please enter maximum run time (seconds)")
 maxRunTime = int(input())
 
@@ -126,17 +118,17 @@ path = str(input())
 # reading problem
 algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
 
-# run on all
-runOnAll(maze,maxRunTime)
+#
+# # run on all
+# runOnAll(maze,maxRunTime)
 
-# # run as requeusted
-# algorithm, isHeuristic = getAlgorithmFromString(algorithmName,isVisual)
-# print("solving with "+algorithmName+", please wait...")
-# if isHeuristic is True:
-#     algorithm(maze, maxRunTime, "movesCount")
-#     algorithm(maze, maxRunTime, "minimumMoves")
-# else:
-#     algorithm(maze, maxRunTime)
+# run as requeusted
+algorithm, isHeuristic = getAlgorithmFromString(algorithmName,False)
+print("solving with "+algorithmName+", please wait...")
+if isHeuristic is True:
+    algorithm(maze, maxRunTime, "minimumMoves")
+else:
+    algorithm(maze, maxRunTime)
 
 print('')
 print("PRESS ENTER TO EXIT")
