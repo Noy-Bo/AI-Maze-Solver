@@ -1,8 +1,6 @@
 from queue import Queue
 
 import numpy as np
-from heapdict import heapdict
-from DataStructures.HeapDict import HeapDict
 from Utilities import getCoordsFromDirection
 class miniNode(object):
     def __init__(self, x, y,moves,fatherNode = None):
@@ -15,12 +13,13 @@ class miniNode(object):
 orderStack = []
 movesMatrix = None
 visited = {}
+minVal = None
 
 def HeuristicEvauluationSearch(maze,goalNode):
     global movesMatrix
     global orderStack
     global visited
-
+    global minVal
 
     orderStack = []
     movesMatrix = None
@@ -35,8 +34,9 @@ def HeuristicEvauluationSearch(maze,goalNode):
     #orderStack[str(maze.goalNode.x)+","+str(maze.goalNode.y)] = (0,maze.goalNode.x,maze.goalNode.y)
     startNode = miniNode(goalNode.x,goalNode.y,0)
     orderStack.append((0,goalNode.x,goalNode.y))
+    minVal = maze.maze[goalNode.x][goalNode.y]
     iterativeBFS(maze)
-    return movesMatrix
+    return movesMatrix,minVal
 
 # #killing dead ends
 # def iterativeBFS(maze):
@@ -96,6 +96,7 @@ def iterativeBFS(maze):
     global movesMatrix
     global orderStack
     global visited
+    global minVal
 
     while len(orderStack) is not 0:
 
@@ -111,3 +112,5 @@ def iterativeBFS(maze):
                 newX, newY = getCoordsFromDirection(direction, x, y)
                 if maze.isValidMove(newX, newY) and (str(newX)+","+str(newY)) not in visited:
                         orderStack.append((moves+1,newX,newY))
+                        if maze.maze[newX][newY] < minVal:
+                            minVal = maze.maze[newX][newY]

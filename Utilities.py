@@ -1,7 +1,3 @@
-
-from DataStructures.HeapDict import HeapDict
-from DataStructures.PriorityQueue import PriorityQueue
-from DataStructures.PriorityQueueDictionary import PriorityQueueDictionary
 from Entities.Maze import Maze
 from Entities.Node import Node
 

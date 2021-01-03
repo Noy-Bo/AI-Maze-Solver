@@ -1,5 +1,4 @@
 import turtle
-import tkinter as tk
 
 
 class Pen(turtle.RawPen):
