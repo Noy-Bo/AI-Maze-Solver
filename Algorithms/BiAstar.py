@@ -10,8 +10,7 @@ from Utilities import getCoordsFromDirection, evaluateStats
 # this was programmed using 'AI modern approach' pseudo code for Bidirectional algorithm.
 #                      @@@@ BiAstar algorithm. @@@
 #      this algorithm start to search from goal node and start node simultaneously
-#       until it reaches an intersection between the two.
-#       Note - BiAstar doesnt guarantee to return optimal solution
+#       until it reaches an intersection between the two and satisfy the optimality condition.
 
 
 
@@ -20,6 +19,7 @@ heuristicSum = 0
 global forwardContinue
 global backwardsContinue
 global turn
+
 def BiAstar(maze,maxRunTime, heuristicName):
 
 
@@ -42,6 +42,8 @@ def BiAstar(maze,maxRunTime, heuristicName):
     heuristicCounter = 0
     heuristicSum = 0
     startPoint = maze.startNode
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
 
     backwardsFrontierPriorityQueue = HeapDict()
     backwardsFrontierHashTable = {}
@@ -78,6 +80,8 @@ def BiAstar(maze,maxRunTime, heuristicName):
 
     forwardSolutionNode = None
     backwardsSolutionNode = None
+
+
     # Algorithm
     while time.time() < (startTime + maxRunTime):
 
@@ -110,6 +114,7 @@ def BiAstar(maze,maxRunTime, heuristicName):
             # checking if we hit the solution
             if isIntersecting(node,backwardsFrontierHashTable,backwardsExploredHashTable):
 
+                # optimality condition
                 if intersected == True:
                     if node.key in backwardsFrontierHashTable:
                         tmpBackwardsSolutionNode = backwardsFrontierHashTable[node.key]
@@ -161,6 +166,7 @@ def BiAstar(maze,maxRunTime, heuristicName):
             # checking if we hit the solution
             if isIntersecting(node,frontierHashTable,exploredHashTable):
 
+                # optimality condition
                 if intersected == True:
                     if node.key in frontierHashTable:
                         tmpForwardSolutionNode = frontierHashTable[node.key]

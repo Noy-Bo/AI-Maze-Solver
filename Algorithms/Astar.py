@@ -35,7 +35,8 @@ def Astar (maze,maxRunTime,heuristicName):
     heuristicSum = 0
 
     startPoint = maze.startNode
-
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     frontierPriorityQueue = HeapDict()
     frontierHashTable = {}
     exploredHashTable = {}
@@ -95,10 +96,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
             newNodeCost = maze.getCost(x, y)
             heuristicValue = heuristic(x,y,maze.goalNode)
             newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
-            # test_val = estimateDirection(newNode)
-            # heuristicValue *= test_val
-            # newNode.heuristicCost = heuristicValue
-            # newNode.pathCostWithHeuristic = newNode.pathCost + heuristicValue
+
 
             heuristicSum += heuristicValue
             heuristicCounter += 1
@@ -120,12 +118,5 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
 
-            # node in explored and not in frontier
-            # elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:
-            #     if newNode.pathCost < exploredHashTable[newNode.key].pathCost or\
-            #             (newNode.pathCost == exploredHashTable[newNode.key].pathCost and newNode.pathCostWithHeuristic < exploredHashTable[
-            #                 newNode.key].pathCostWithHeuristic):
-            #         frontierPriorityQueue.push(newNode)
-            #         frontierHashTable[newNode.key] = newNode
 
 

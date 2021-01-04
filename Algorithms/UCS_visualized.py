@@ -32,6 +32,8 @@ def UCSVisual (maze,maxRunTime):
     exploredHashTable = {}
 
     startPoint = maze.startNode
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     # inserting first node
     frontierPriorityQueue.push(startPoint)
     frontierHashTable[startPoint.key] = startPoint
@@ -62,7 +64,8 @@ def UCSVisual (maze,maxRunTime):
         exploredHashTable[node.key] = node
         exploredCounter += 1
         expandNode(maze,node,frontierPriorityQueue,frontierHashTable,exploredHashTable)
-        # mark - expanding node, node.x/node.y - hard yellow
+
+        # visualize painting green expanded nodes + painting rate increase when algorithm has higher run time
         visual_counter += 1
         if visual_counter > visual_turns:
             pen.paint_tile(node.x, node.y, pen.dark_green, True)
@@ -95,7 +98,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
             if newNode.key not in exploredHashTable and newNode.key not in frontierHashTable:
                 frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
-                # mark - node is valid, we're only looking at it - yellow
+                # painting frontier node in yellow
                 pen.paint_tile(newNode.x, newNode.y, pen.light_green, False)
 
             # # incase we already seen this node but with higher path cost.

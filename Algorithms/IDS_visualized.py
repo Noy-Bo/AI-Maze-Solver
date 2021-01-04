@@ -31,7 +31,11 @@ def IDSVisual(maze, maxRunTime):
     cutOffs = []
     isHeuristic = False
     startPoint = maze.startNode
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     currentDepthLimit = -1
+
+    # algorithm
     startTime = time.time()
     while time.time() < (startTime + maxRunTime):
         currentDepthLimit += 1
@@ -83,7 +87,7 @@ def IDSVisual(maze, maxRunTime):
             exploredHashTable[node.key] = node
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, currentDepthLimit)
 
-            # mark - expanding node, node.x/node.y - hard yellow
+            # visualize painting green expanded nodes + painting rate increase when algorithm has higher run time
             visual_counter += 1
             if visual_counter > visual_turns:
                 pen.paint_tile(node.x, node.y, pen.dark_green, True)
@@ -119,7 +123,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                 if newNode.key not in exploredHashTable and newNode.key not in frontierHashTable:
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
-                    # mark - node is valid, we're only looking at it - yellow
+                    # painting frontier node in yellow
                     pen.paint_tile(newNode.x, newNode.y, pen.light_green, False)
 
                 # node is in frontier

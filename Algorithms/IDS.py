@@ -21,7 +21,11 @@ def IDS (maze,maxRunTime):
     cutOffs = []
     isHeuristic = False
     startPoint = maze.startNode
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     currentDepthLimit = -1
+
+    #algorithm
     startTime = time.time()
     while time.time() < (startTime + maxRunTime):
 
