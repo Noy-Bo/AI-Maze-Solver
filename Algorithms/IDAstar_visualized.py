@@ -48,8 +48,10 @@ def IDAstarVisual (maze,maxRunTime,heuristicName):
     startPoint = maze.startNode
     cutOffs = []
     isHeuristic = True
-
-    currentFLimit = 0
+    startPoint.heuristicCost = heuristic(startPoint.x, startPoint.y, maze.goalNode)
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
+    currentFLimit = startPoint.heuristicCost + 1
     while time.time() < (startTime + maxRunTime):
 
         calcDepthRecursive(startPoint)

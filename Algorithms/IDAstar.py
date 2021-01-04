@@ -30,23 +30,30 @@ def IDAstar (maze,maxRunTime,heuristicName):
     global globalExploredCounter
     global heuristicSum
     global heuristicCounter
+    frontierPriorityQueue = HeapDict()
+    frontierHashTable = {}
+    exploredHashTable = {}
 
     currentFLimit = 0
     globalExploredCounter = 0
     heuristicSum = 0
     heuristicCounter = 0
 
+
     heuristic = chooseHeuristic(heuristicName)
     startPoint = maze.startNode
+    startPoint.heuristicCost = heuristic(startPoint.x,startPoint.y,maze.goalNode)
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     cutOffs = []
     isHeuristic = True
-    currentFLimit = 0
+    currentFLimit = startPoint.heuristicCost+1
     while time.time() < (startTime + maxRunTime):
         #calculating on the run
         calcDepthRecursive(startPoint)
 
         currentFLimit += 1
-        exploredCounter = 0
+        #exploredCounter = 0
 
         frontierPriorityQueue = HeapDict()
         frontierHashTable = {}
@@ -89,8 +96,8 @@ def IDAstar (maze,maxRunTime,heuristicName):
                 evaluateStats('IDAstar', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
                 return True
 
-            if node.key not in exploredHashTable:
-                exploredCounter += 1
+            # if node.key not in exploredHashTable:
+            #     exploredCounter += 1
             exploredHashTable[node.key] = node
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, currentFLimit,heuristic)
 
