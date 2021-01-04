@@ -1,15 +1,10 @@
 import time
 from DataStructures.HeapDict import HeapDict
 from Entities.Node import Node
-from Utilities import getCoordsFromDirection, getDirectionFromCoords, evaluateStats
+from Utilities import getCoordsFromDirection, evaluateStats
 
 
 # this was programmed using 'AI modern approach' pseudo code for UCS algorithm.
-
-#                   DataStructures:
-# frontierHashTable - Hashtable, inorder to be able to 'find' in o(1)
-# explored - Hashtable to check if a node has already been visited; using python built-in dict with override hashFunction. (3.x python ver)
-# fibonacci heap - to check for the next node with least cost.
 
 
 
@@ -18,7 +13,6 @@ def UCS (maze,maxRunTime):
 
     # initialization
     isHeuristic = False
-    frontierCounter = 0
     exploredCounter = 0
 
     frontierPriorityQueue = HeapDict()
@@ -26,6 +20,8 @@ def UCS (maze,maxRunTime):
     exploredHashTable = {}
 
     startPoint = maze.startNode
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     # inserting first node
     frontierPriorityQueue.push(startPoint)
     frontierHashTable[startPoint.key] = startPoint
@@ -78,11 +74,5 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                 frontierPriorityQueue.push(newNode)
                 frontierHashTable[newNode.key] = newNode
 
-            # # incase we already seen this node but with higher path cost.
-            # elif newNode.key in frontierHashTable and newNode.pathCost < frontierHashTable[newNode.key].pathCost:
-            #     #frontierHashTable[newNode.key] = newNode
-            #     frontierPriorityQueue.removeSpecific(newNode.x,newNode.y)  # this is o(n), need to think of a better way to do it
-            #     frontierPriorityQueue.push(newNode)
-            #     frontierHashTable[newNode.key] = newNode
 
 

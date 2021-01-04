@@ -11,8 +11,7 @@ from Utilities import getCoordsFromDirection, evaluateStats
 # this was programmed using 'AI modern approach' pseudo code for Bidirectional algorithm.
 #                      @@@@ BiAstar algorithm. @@@
 #      this algorithm start to search from goal node and start node simultaneously
-#       until it reaches an intersection between the two.
-#       Note - BiAstar doesnt guarantee to return optimal solution
+#       until it reaches an intersection between the two and satisfy the optimality condition.
 
 
 heuristicCounter = 0
@@ -50,6 +49,8 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
     heuristicCounter = 0
     heuristicSum = 0
     startPoint = maze.startNode
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
 
     backwardsFrontierPriorityQueue = HeapDict()
     backwardsFrontierHashTable = {}
@@ -120,6 +121,7 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
             # checking if we hit the solution
             if isIntersecting(node, backwardsFrontierHashTable, backwardsExploredHashTable):
 
+                # optimality condition
                 if intersected == True:
                     if node.key in backwardsFrontierHashTable:
                         tmpBackwardsSolutionNode = backwardsFrontierHashTable[node.key]
@@ -153,7 +155,7 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
             exploredHashTable[node.key] = node
             expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHashTable, turn, heuristic,backwardsFrontierHashTable,backwardsExploredHashTable)
 
-            # mark - expanding node, node.x/node.y - hard yellow
+            # visualize painting green expanded nodes + painting rate increase when algorithm has higher run time
             visual_counter += 1
             if visual_counter > visual_turns:
                 pen.paint_tile(node.x, node.y, pen.dark_green, True)
@@ -183,6 +185,7 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
             # checking if we hit the solution
             if isIntersecting(node, frontierHashTable, exploredHashTable):
 
+                # optimality condition
                 if intersected == True:
                     if node.key in frontierHashTable:
                         tmpForwardSolutionNode = frontierHashTable[node.key]
@@ -269,7 +272,7 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
             # new node, insert it to PQ and Hashtable
             if newNode.key not in exploredHashTable and newNode.key not in frontierHashTable:
-                # mark - node valid, we're only looking at it - yellow
+                # painting frontier node in yellow or orange if its already been painted (indicates the 2 searches intersected)
                 if newNode.key not in othersideExploredHash and  newNode.key not in othersideFrontHash:
                     pen.paint_tile(newNode.x, newNode.y, pen.light_green, False)
                 else:

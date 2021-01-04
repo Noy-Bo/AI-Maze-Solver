@@ -1,6 +1,6 @@
 ('c:\\users\\1\\appdata\\roaming\\python\\python37\\site-packages\\scipy-1.1.0-py3.7-win-amd64.egg',
  None,
- {'*.pyc', '*.pyw', '*.cp37-win_amd64.pyd', '*.pyd', 'EGG-INFO', '*.py'},
+ {'*.pyw', '*.pyc', 'EGG-INFO', '*.pyd', '*.cp37-win_amd64.pyd', '*.py'},
  'DATA',
  [('scipy\\BENTO_BUILD.txt',
    'c:\\users\\1\\appdata\\roaming\\python\\python37\\site-packages\\scipy-1.1.0-py3.7-win-amd64.egg\\scipy\\BENTO_BUILD.txt',

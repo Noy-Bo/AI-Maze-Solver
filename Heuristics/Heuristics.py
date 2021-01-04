@@ -8,17 +8,17 @@ def updateMinVal(val):
     global minVal
     minVal = val
 
-def diagonalHeuristic(x,y,goalNode):
-
-    maxDistance = max(abs(x - goalNode.x),abs(y - goalNode.y))
-    minDistance = min(abs(x - goalNode.x),abs(y - goalNode.y))
-
-    diagonalMoveCost = 1 #   ~(2 - sqrt(2))
-    regularMoveCost = 1
-
-    h = diagonalMoveCost*minDistance + regularMoveCost*(maxDistance-minDistance)
-
-    return h
+# def diagonalHeuristic(x,y,goalNode):
+#
+#     maxDistance = max(abs(x - goalNode.x),abs(y - goalNode.y))
+#     minDistance = min(abs(x - goalNode.x),abs(y - goalNode.y))
+#
+#     diagonalMoveCost = 1 #   ~(2 - sqrt(2))
+#     regularMoveCost = 1
+#
+#     h = diagonalMoveCost*minDistance + regularMoveCost*(maxDistance-minDistance)
+#
+#     return h
 
 # should be optimal for our config, this hueristic calculate the minimum moves to reach the goal node.
 def movesCountHeuristic(x, y, goalNode):
@@ -27,14 +27,6 @@ def movesCountHeuristic(x, y, goalNode):
     dy = abs(y - goalNode.y)
     h = ((dx + dy) - min(dx, dy))
     return ((dx + dy) - min(dx, dy))
-
-# # should be optimal for our config, this hueristic calculate the minimum moves to reach the goal node.
-# def movesCountHeuristic(x, y, goalNode):
-#
-#     dx = abs(x - goalNode.x)
-#     dy = abs(y - goalNode.y)
-#     return ((dx + dy) - min(dx, dy))
-
 
 def minimumMovesBi(x,y,goal):
     global evalMovesMatrixBackwards
@@ -62,9 +54,9 @@ def chooseHeuristic(heuristicName):
     if heuristicName == 'movesCount':
         h = movesCountHeuristic
         return h
-    elif heuristicName == 'diagonal':
-        h = diagonalHeuristic
-        return h
+    # elif heuristicName == 'diagonal':
+    #     h = diagonalHeuristic
+    #     return h
     elif heuristicName == 'minimumMoves':
         h = minimumMoves
         return h

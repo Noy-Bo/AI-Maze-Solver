@@ -35,7 +35,8 @@ def Astar (maze,maxRunTime,heuristicName):
     heuristicSum = 0
 
     startPoint = maze.startNode
-
+    startPoint.childNodes = []
+    startPoint.fatherNode = None
     frontierPriorityQueue = HeapDict()
     frontierHashTable = {}
     exploredHashTable = {}
@@ -65,7 +66,6 @@ def Astar (maze,maxRunTime,heuristicName):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
-            print("time to calculate heuritics: " + str(h_time) )
             evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter) )
             return True
 
@@ -94,14 +94,9 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
         x,y = getCoordsFromDirection(direction, node.x, node.y)
         if maze.isValidMove(x,y):
             newNodeCost = maze.getCost(x, y)
-            tick = time.time()
             heuristicValue = heuristic(x,y,maze.goalNode)
-            h_time += time.time()-tick
             newNode = Node(x,y,newNodeCost,node,node.pathCost + newNodeCost,node.pathCost + newNodeCost +heuristicValue,node.depth+1,heuristicValue)
-            # test_val = estimateDirection(newNode)
-            # heuristicValue *= test_val
-            # newNode.heuristicCost = heuristicValue
-            # newNode.pathCostWithHeuristic = newNode.pathCost + heuristicValue
+
 
             heuristicSum += heuristicValue
             heuristicCounter += 1
@@ -123,46 +118,5 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                     frontierPriorityQueue.push(newNode)
                     frontierHashTable[newNode.key] = newNode
 
-            # node in explored and not in frontier
-            # elif newNode.key in exploredHashTable and newNode.key not in frontierHashTable:
-            #     if newNode.pathCost < exploredHashTable[newNode.key].pathCost or\
-            #             (newNode.pathCost == exploredHashTable[newNode.key].pathCost and newNode.pathCostWithHeuristic < exploredHashTable[
-            #                 newNode.key].pathCostWithHeuristic):
-            #         frontierPriorityQueue.push(newNode)
-            #         frontierHashTable[newNode.key] = newNode
 
 
-
-
-#
-#
-# def estimateDirection(node):
-#     if node.fatherNode is None:
-#         return 1;
-#     if node.fatherNode.fatherNode is None:
-#         return 1;
-#     if node.fatherNode.fatherNode is None:
-#         return 1;
-#
-#     towardsGoal = 0
-#     father = node.fatherNode
-#     grandFather = node.fatherNode
-#     grandGrandFather = node.fatherNode.fatherNode
-#
-#     if node.heuristicCost < father.heuristicCost:
-#         towardsGoal +=1
-#     if father.heuristicCost < grandFather.heuristicCost:
-#         towardsGoal +=1
-#     if grandFather.heuristicCost < grandGrandFather.heuristicCost:
-#         towardsGoal +=1
-#
-#     if towardsGoal == 0:
-#         return 1
-#     elif towardsGoal == 1:
-#         return 0.8
-#     elif towardsGoal == 2:
-#         return 0.5
-#     elif towardsGoal == 3:
-#         return 0.1
-#
-#     return 1

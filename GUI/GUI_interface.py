@@ -20,7 +20,7 @@ class GuiInterface(object):
         self.pen = None
         self.title = "Maze AI Solver"
         self.algorithms = ["Astar", "biAstar", "IDAstar", "IDS", "UCS"]
-        self.path = "mazes/maze24walls2.txt"
+        self.path = "ENTER PATH"
         self.mazeScreen = None
         self.pen = None
         self.root = None
@@ -79,12 +79,14 @@ class GuiInterface(object):
         algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(self.path)
         algorithm, isHeuristic = self.getAlgorithmFromString(self.combo.get(), self.visualCheckBox.get())
         self.textBox.set("solving with " + self.combo.get() + ", please wait...")
+        self.mazeScreen.update()
         if isHeuristic is True:
             algorithm(maze, maxRunTime, "minimumMoves")
             #algorithm(maze, maxRunTime, "movesCount")
         else:
             algorithm(maze, maxRunTime)
         self.textBox.set("Finished running. See OutputResult.txt for results")
+        self.mazeScreen.update()
 
     def browseFile(self):
         file = filedialog.askopenfile(parent=self.root, mode='rb', title='Choose a file')
