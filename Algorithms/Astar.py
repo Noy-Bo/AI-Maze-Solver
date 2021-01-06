@@ -52,6 +52,13 @@ def Astar (maze,maxRunTime,heuristicName):
     # Algorithm
     while time.time() < (startTime + maxRunTime):
         if frontierPriorityQueue.isEmpty():
+            runTime = time.time() - startTime
+            if heuristicCounter == 0:
+                heuristicSumOverHeuristicCounter = 0
+            else:
+                heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+            evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                          heuristicName, heuristicSumOverHeuristicCounter)
             return False
 
         # deleting node from frontierPriorityQueue
@@ -66,7 +73,11 @@ def Astar (maze,maxRunTime,heuristicName):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
-            evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter) )
+            if heuristicCounter == 0:
+                heuristicSumOverHeuristicCounter = 0
+            else:
+                heuristicSumOverHeuristicCounter = heuristicSum/heuristicCounter
+            evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,heuristicSumOverHeuristicCounter )
             return True
 
         #if node.key not in exploredHashTable:
@@ -76,7 +87,11 @@ def Astar (maze,maxRunTime,heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
-    evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
+    if heuristicCounter == 0:
+        heuristicSumOverHeuristicCounter = 0
+    else:
+        heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+    evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,heuristicSumOverHeuristicCounter)
     return False
 
 

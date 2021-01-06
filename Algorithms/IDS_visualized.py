@@ -34,6 +34,7 @@ def IDSVisual(maze, maxRunTime):
     startPoint.childNodes = []
     startPoint.fatherNode = None
     currentDepthLimit = -1
+    numOfPrevExplored = None
 
     # algorithm
     startTime = time.time()
@@ -57,7 +58,16 @@ def IDSVisual(maze, maxRunTime):
 
         # Algorithm
         while True:
+
             if frontierPriorityQueue.isEmpty():
+                # checking if no solution
+                if numOfPrevExplored == len(exploredHashTable):
+                    runTime = time.time() - startTime
+                    node.depth = currentDepthLimit
+                    evaluateStats('IDS', maze, False, node, cutOffs, globalExploredCounter, runTime, isHeuristic,
+                                  maxIDSdepth=currentDepthLimit-1)
+                    return False
+                numOfPrevExplored = len(exploredHashTable)
                 break;
 
             # deleting node from frontierPriorityQueue
@@ -76,7 +86,7 @@ def IDSVisual(maze, maxRunTime):
                 # stop the timer
                 runTime = time.time() - startTime
                 node.depth = currentDepthLimit
-                evaluateStats('IDS', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic)
+                evaluateStats('IDS', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic,maxIDSdepth=currentDepthLimit)
 
                 # mark - print path to goal
                 pen.paint_path(node)
@@ -101,7 +111,7 @@ def IDSVisual(maze, maxRunTime):
     # time's up!
     runTime = time.time() - startTime
     node.depth = currentDepthLimit
-    evaluateStats('IDS', maze, False, node, cutOffs, globalExploredCounter, runTime, isHeuristic)
+    evaluateStats('IDS', maze, False, node, cutOffs, globalExploredCounter, runTime, isHeuristic,maxIDSdepth=currentDepthLimit)
     return False
 
 

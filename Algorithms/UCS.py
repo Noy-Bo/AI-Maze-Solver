@@ -30,6 +30,8 @@ def UCS (maze,maxRunTime):
     startTime = time.time()
     while  time.time() < (startTime + maxRunTime) :
         if frontierPriorityQueue.isEmpty():
+            runTime = time.time() - startTime
+            evaluateStats('UCS', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic)
             return False
 
         # deleting node from frontierPriorityQueue

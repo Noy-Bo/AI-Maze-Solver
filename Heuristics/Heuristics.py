@@ -26,7 +26,7 @@ def movesCountHeuristic(x, y, goalNode):
     dx = abs(x - goalNode.x)
     dy = abs(y - goalNode.y)
     h = ((dx + dy) - min(dx, dy))
-    return ((dx + dy) - min(dx, dy))
+    return h
 
 def minimumMovesBi(x,y,goal):
     global evalMovesMatrixBackwards

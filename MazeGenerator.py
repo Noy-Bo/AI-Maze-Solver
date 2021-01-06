@@ -123,7 +123,7 @@ if __name__ == '__main__':
 
   print("Enter maze size")
   SIZE = int(input())
-  print("Enter walls ratio: 1-9 (1 - minimum number of walls, 9 maximum number of walls)")
+  print("Enter walls ratio: 1-{} (1 - minimum number of walls, {} maximum number of walls)".format(SIZE**2,SIZE**2))
   openScale = int(input())
   print("Enter starting point, x coordinate (1+)")
   agent_X = int(input())
@@ -169,15 +169,16 @@ if __name__ == '__main__':
     line = lines[i]
     splitted = line.split(',')
     for j in range(0, int(mazeSize)):
-      if 'O' in splitted[j]:
-        newMaze[j][i] = random.randint(1,9)
-      else:
+      if '0' in splitted[j]:
+        newMaze[j][i] = random.randint(5,9)
+      elif '-1' in splitted[j]:
         # decreasing num of walls
 
-        if random.randint(1,openScale) == 1 or (j == agent_X or i == agent_Y) or (j == goal_X or i == goal_Y):
-          newMaze[j][i] = random.randint(1, 9)
-        elif (j is not agent_X or i is not agent_Y) and (j is not goal_X or i is not goal_Y):
+        if random.randint(1,openScale) == 1 or (j == agent_X and i == agent_Y) or (j == goal_X and i == goal_Y):
+          newMaze[j][i] = random.randint(5, 9)
+        else:
           newMaze[j][i] = -1
+
 
 
 
