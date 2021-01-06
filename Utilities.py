@@ -86,7 +86,7 @@ def getDirectionFromCoords(currX,currY,fatherX,fatherY):
 
 # calculate the statistics for an algorithm run
 def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,exploredCounter,runTime,isHeuristic
-                  ,heuristicName = None,heuristicAvg = None,backwardsNode=None,backwardsFrontierPriorityQueue=None,backwardsStartNode=None):
+                  ,heuristicName = None,heuristicAvg = None,backwardsNode=None,backwardsFrontierPriorityQueue=None,backwardsStartNode=None,maxIDSdepth = None):
 
     # stats calculation
     global minDepth
@@ -139,7 +139,10 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     solutionDepth = max(backwardsSolutionDepth,solutionDepth) # this might need to be changed, maybe sum the 2 depths???
 
     if solved is True:
-        EBF = exploredCounter**(1/solutionDepth)
+        if solutionDepth == 0:
+            EBF = 1
+        else:
+            EBF = exploredCounter**(1/solutionDepth)
     else:
         EBF = '-'
 
@@ -162,6 +165,7 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     if algorithmName.lower() == "ids":
         minDepth = '-'
         avgDepth = '-'
+        maxDepth = maxIDSdepth
 
 
     if isHeuristic == False:
@@ -174,7 +178,11 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
         resultFile.write(str(movesString) + " " + str(optimalSolutionCost) + " " + str(exploredCounter) + "\n")
     elif solved is False:
         resultFile.write("FAILED\n")
-    resultFile.write(str(algorithmName) + " | " + str(heuristicName) + " | " + str(exploredCounter) + " | " + str(solutionDepth / exploredCounter) +
+    if exploredCounter == 0:
+        solutionDepthOverExploredCounter = str(0)
+    else:
+        solutionDepthOverExploredCounter = str(solutionDepth / exploredCounter)
+    resultFile.write(str(algorithmName) + " | " + str(heuristicName) + " | " + str(exploredCounter) + " | " + solutionDepthOverExploredCounter +
                      " | " + str(solved) + " | " + str(runTime) + " | " + str(EBF) + " | " + str(heuristicAvg) + " | " + str(minDepth) + " | " + str(avgDepth) + " | " + str(maxDepth))
     resultFile.close()
 
@@ -185,7 +193,7 @@ def evaluateStats(algorithmName,maze,solved,solutionNode,frontierPriorityQueue,e
     print("optimal path cost: {}".format(optimalSolutionCost))
     print("epxnaded nodes: {}".format(exploredCounter))
     print("solution depth: {}".format(solutionDepth))
-    print("penetration rate: {}".format(solutionDepth / exploredCounter))
+    print("penetration rate: {}".format(solutionDepthOverExploredCounter))
     print("solved successfully: {}".format(solved))
     print("run time: {}".format(runTime))
     print("EBF: {}".format(EBF))

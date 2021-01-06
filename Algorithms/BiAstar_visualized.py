@@ -86,6 +86,14 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
 
     forwardSolutionNode = None
     backwardsSolutionNode = None
+
+    if backwardsStartPoint.cost == -1 or startPoint.cost == -1:
+        runTime = time.time() - startTime
+        evaluateStats('BiAstar', maze, False, startPoint, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                      heuristicName, 0, backwardsStartPoint, backwardsFrontierPriorityQueue,
+                      backwardsStartPoint)
+        return False
+
     # Algorithm
     while time.time() < (startTime + maxRunTime):
 
@@ -97,10 +105,13 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
 
             # mark - print path
             pen.paint_path(forwardSolutionNode, backwardsSolutionNode)
-
+            if heuristicCounter == 0:
+                heuristicSumOverHeuristicCounter = 0
+            else:
+                heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
             evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter,
                           runTime, isHeuristic,
-                          heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                          heuristicName, heuristicSumOverHeuristicCounter, backwardsSolutionNode,
                           backwardsFrontierPriorityQueue, backwardsStartPoint)
             return True
 
@@ -108,6 +119,15 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
                 turn is False and backwardsContinue is False):  # ============================= FRONT SEARCH TURN
 
             if frontierPriorityQueue.isEmpty():
+                runTime = time.time() - startTime
+                if heuristicCounter == 0:
+                    heuristicSumOverHeuristicCounter = 0
+                else:
+                    heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                evaluateStats('BiAstar', maze, False, startPoint, frontierPriorityQueue, exploredCounter, runTime,
+                              isHeuristic,
+                              heuristicName,heuristicSumOverHeuristicCounter, backwardsStartPoint, backwardsFrontierPriorityQueue,
+                              backwardsStartPoint)
                 return False
 
             # deleting node from frontierPriorityQueue
@@ -143,10 +163,13 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
                                      optimalPathCost) is True:
                         # stop the timer
                         runTime = time.time() - startTime
-
+                        if heuristicCounter == 0:
+                            heuristicSumOverHeuristicCounter = 0
+                        else:
+                            heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
                         evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue,
                                       exploredCounter, runTime, isHeuristic,
-                                      heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                                      heuristicName, heuristicSumOverHeuristicCounter, backwardsSolutionNode,
                                       backwardsFrontierPriorityQueue, backwardsStartPoint)
                         return True
 
@@ -172,6 +195,15 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
                 turn is True and forwardContinue is False):  # ================================ BACKWARDS SEARCH TURN
 
             if backwardsFrontierPriorityQueue.isEmpty():
+                runTime = time.time() - startTime
+                if heuristicCounter == 0:
+                    heuristicSumOverHeuristicCounter = 0
+                else:
+                    heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                evaluateStats('BiAstar', maze, False, startPoint, frontierPriorityQueue, exploredCounter, runTime,
+                              isHeuristic,
+                              heuristicName, heuristicSumOverHeuristicCounter, backwardsStartPoint, backwardsFrontierPriorityQueue,
+                              backwardsStartPoint)
                 return False
 
             # deleting node from frontierPriorityQueue
@@ -210,10 +242,13 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
 
                         # mark - print path
                         pen.paint_path(forwardSolutionNode, backwardsSolutionNode)
-
+                        if heuristicCounter == 0:
+                            heuristicSumOverHeuristicCounter = 0
+                        else:
+                            heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
                         evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue,
                                       exploredCounter, runTime, isHeuristic,
-                                      heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                                      heuristicName, heuristicSumOverHeuristicCounter, backwardsSolutionNode,
                                       backwardsFrontierPriorityQueue, backwardsStartPoint)
                         return True
 
@@ -239,8 +274,12 @@ def BiAstarVisual(maze, maxRunTime, heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
+    if heuristicCounter == 0:
+        heuristicSumOverHeuristicCounter = 0
+    else:
+        heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
     evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                  heuristicName, (heuristicSum / heuristicCounter), node, backwardsFrontierPriorityQueue,
+                  heuristicName, heuristicSumOverHeuristicCounter, node, backwardsFrontierPriorityQueue,
                   backwardsStartPoint)
     return False
 

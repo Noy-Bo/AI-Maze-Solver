@@ -34,7 +34,10 @@ def HeuristicEvauluationSearch(maze,goalNode):
     #orderStack[str(maze.goalNode.x)+","+str(maze.goalNode.y)] = (0,maze.goalNode.x,maze.goalNode.y)
     startNode = miniNode(goalNode.x,goalNode.y,0)
     orderStack.append((0,goalNode.x,goalNode.y))
-    minVal = maze.maze[goalNode.x][goalNode.y]
+    if maze.maze[goalNode.x][goalNode.y] == -1:
+        minVal = float('inf')
+    else:
+        minVal = maze.maze[goalNode.x][goalNode.y]
     iterativeBFS(maze)
     return movesMatrix,minVal
 

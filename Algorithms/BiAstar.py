@@ -81,6 +81,12 @@ def BiAstar(maze,maxRunTime, heuristicName):
     forwardSolutionNode = None
     backwardsSolutionNode = None
 
+    if backwardsStartPoint.cost == -1 or startPoint.cost == -1:
+        runTime = time.time() - startTime
+        evaluateStats('BiAstar', maze, False, startPoint, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                      heuristicName, 0, backwardsStartPoint, backwardsFrontierPriorityQueue,
+                      backwardsStartPoint)
+        return False
 
     # Algorithm
     while time.time() < (startTime + maxRunTime):
@@ -89,10 +95,13 @@ def BiAstar(maze,maxRunTime, heuristicName):
         if intersected is True and backwardsFrontierPriorityQueue.isEmpty() is False and frontierPriorityQueue.isEmpty() is False and stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),optimalPathCost) is True:
             # stop the timer
             runTime = time.time() - startTime
-
+            if heuristicCounter == 0:
+                heuristicSumOverHeuristicCounter = 0
+            else:
+                heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
             evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter,
                           runTime, isHeuristic,
-                          heuristicName, (heuristicSum / heuristicCounter), backwardsSolutionNode,
+                          heuristicName, heuristicSumOverHeuristicCounter, backwardsSolutionNode,
                           backwardsFrontierPriorityQueue, backwardsStartPoint)
             return True
 
@@ -100,6 +109,15 @@ def BiAstar(maze,maxRunTime, heuristicName):
         if (turn is True and forwardContinue is True) or (turn is False and backwardsContinue is False): # ============================= FRONT SEARCH TURN
 
             if frontierPriorityQueue.isEmpty():
+                runTime = time.time() - startTime
+                if heuristicCounter == 0:
+                    heuristicSumOverHeuristicCounter = 0
+                else:
+                    heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                evaluateStats('BiAstar', maze, False, startPoint, frontierPriorityQueue, exploredCounter, runTime,
+                              isHeuristic,
+                              heuristicName,heuristicSumOverHeuristicCounter , backwardsStartPoint, backwardsFrontierPriorityQueue,
+                              backwardsStartPoint)
                 return False
 
 
@@ -137,9 +155,12 @@ def BiAstar(maze,maxRunTime, heuristicName):
                     if stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),optimalPathCost) is True:
                         # stop the timer
                         runTime = time.time() - startTime
-
+                        if heuristicCounter == 0:
+                            heuristicSumOverHeuristicCounter = 0
+                        else:
+                            heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
                         evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                                      heuristicName, (heuristicSum / heuristicCounter),backwardsSolutionNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                                      heuristicName, heuristicSumOverHeuristicCounter,backwardsSolutionNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
                         return True
 
 
@@ -153,6 +174,15 @@ def BiAstar(maze,maxRunTime, heuristicName):
         elif (turn is False and backwardsContinue is True) or (turn is True and forwardContinue is False): # ================================ BACKWARDS SEARCH TURN
 
             if backwardsFrontierPriorityQueue.isEmpty():
+                runTime = time.time() - startTime
+                if heuristicCounter == 0:
+                    heuristicSumOverHeuristicCounter = 0
+                else:
+                    heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                evaluateStats('BiAstar', maze, False, startPoint, frontierPriorityQueue, exploredCounter, runTime,
+                              isHeuristic,
+                              heuristicName,heuristicSumOverHeuristicCounter, backwardsStartPoint, backwardsFrontierPriorityQueue,
+                              backwardsStartPoint)
                 return False
 
             # deleting node from frontierPriorityQueue
@@ -188,9 +218,12 @@ def BiAstar(maze,maxRunTime, heuristicName):
                     if stopCondition(frontierPriorityQueue.peekFirst(), backwardsFrontierPriorityQueue.peekFirst(),optimalPathCost) is True:
                         # stop the timer
                         runTime = time.time() - startTime
-
+                        if heuristicCounter == 0:
+                            heuristicSumOverHeuristicCounter = 0
+                        else:
+                            heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
                         evaluateStats('BiAstar', maze, True, forwardSolutionNode, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                                  heuristicName, (heuristicSum / heuristicCounter),backwardsSolutionNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                                  heuristicName, heuristicSumOverHeuristicCounter,backwardsSolutionNode,backwardsFrontierPriorityQueue,backwardsStartPoint)
                         return True
 
             #if node.key not in backwardsExploredHashTable:
@@ -203,8 +236,12 @@ def BiAstar(maze,maxRunTime, heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
+    if heuristicCounter == 0:
+        heuristicSumOverHeuristicCounter = 0
+    else:
+        heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
     evaluateStats('BiAstar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
-                              heuristicName, (heuristicSum / heuristicCounter),node,backwardsFrontierPriorityQueue,backwardsStartPoint)
+                              heuristicName, heuristicSumOverHeuristicCounter,node,backwardsFrontierPriorityQueue,backwardsStartPoint)
     return False
 
 

@@ -12,7 +12,7 @@ from Utilities import getCoordsFromDirection, evaluateStats, calcDepthRecursive
 #      increasing depth paths. the implementation is basically Best-First-Search
 #      Note - the solution is not guaranteed to be optimal
 
-
+remaining = False
 pen = None
 currentFLimit = 0
 globalExploredCounter = 0
@@ -35,6 +35,7 @@ def IDAstarVisual (maze,maxRunTime,heuristicName):
     visual_turns = 2
 
     # initialization
+    global remaining
     global currentFLimit
     global globalExploredCounter
     global heuristicSum
@@ -52,6 +53,7 @@ def IDAstarVisual (maze,maxRunTime,heuristicName):
     startPoint.childNodes = []
     startPoint.fatherNode = None
     currentFLimit = startPoint.heuristicCost + 1
+    numOfPrevExplored = None
 
     # algorithm
     while time.time() < (startTime + maxRunTime):
@@ -79,6 +81,18 @@ def IDAstarVisual (maze,maxRunTime,heuristicName):
         # Algorithm
         while True:
             if frontierPriorityQueue.isEmpty():
+                # checking if no solution
+                if numOfPrevExplored == len(exploredHashTable) and remaining is False:
+                    # time's up!
+                    runTime = time.time() - startTime
+                    if heuristicCounter == 0:
+                        heuristicSumOverHeuristicCounter = 0
+                    else:
+                        heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                    evaluateStats('IDAstar', maze, False, node, cutOffs, globalExploredCounter, runTime, isHeuristic,
+                                  heuristicName, heuristicSumOverHeuristicCounter)
+                    return False
+                numOfPrevExplored = len(exploredHashTable)
                 break;
 
             # deleting node from frontierPriorityQueue
@@ -100,7 +114,11 @@ def IDAstarVisual (maze,maxRunTime,heuristicName):
             if maze.isGoal(node):
                 # stop the timer
                 runTime = time.time() - startTime
-                evaluateStats('IDAstar', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
+                if heuristicCounter == 0:
+                    heuristicSumOverHeuristicCounter = 0
+                else:
+                    heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                evaluateStats('IDAstar', maze, True, node, cutOffs, globalExploredCounter, runTime, isHeuristic,heuristicName,heuristicSumOverHeuristicCounter)
                 # mark - print path to goal
                 pen.paint_path(node)
                 return True
@@ -123,7 +141,11 @@ def IDAstarVisual (maze,maxRunTime,heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
-    evaluateStats('IDAstar', maze, False, node, cutOffs, globalExploredCounter, runTime,isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
+    if heuristicCounter == 0:
+        heuristicSumOverHeuristicCounter = 0
+    else:
+        heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+    evaluateStats('IDAstar', maze, False, node, cutOffs, globalExploredCounter, runTime,isHeuristic,heuristicName,heuristicSumOverHeuristicCounter)
     return False
 
 
@@ -132,7 +154,8 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
 
     global heuristicSum
     global heuristicCounter
-
+    global remaining
+    remaining = False
     if (node.pathCostWithHeuristic < FLimit):
 
         # the expansion order is opposite because last element becomes first in the heap, thus it will expand in the right order
@@ -174,3 +197,5 @@ def expandNode(maze, node, frontierPriorityQueue, frontierHashTable, exploredHas
                         frontierPriorityQueue.push(newNode)
                         frontierHashTable[newNode.key] = newNode
 
+    else:
+        remaining = True

@@ -61,7 +61,15 @@ def AstarVisual (maze,maxRunTime,heuristicName):
 
     while time.time() < (startTime + maxRunTime):
         if frontierPriorityQueue.isEmpty():
-            return False
+            if frontierPriorityQueue.isEmpty():
+                runTime = time.time() - startTime
+                if heuristicCounter == 0:
+                    heuristicSumOverHeuristicCounter = 0
+                else:
+                    heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+                evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,
+                              heuristicName, heuristicSumOverHeuristicCounter)
+                return False
 
         # deleting node from frontierPriorityQueue
         node = frontierPriorityQueue.pop()
@@ -75,7 +83,11 @@ def AstarVisual (maze,maxRunTime,heuristicName):
         if maze.isGoal(node):
             # stop the timer
             runTime = time.time() - startTime
-            evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter) )
+            if heuristicCounter == 0:
+                heuristicSumOverHeuristicCounter = 0
+            else:
+                heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+            evaluateStats('Astar', maze, True, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,heuristicSumOverHeuristicCounter )
             # mark - get_path
             pen.paint_path(node)
             return True
@@ -98,7 +110,11 @@ def AstarVisual (maze,maxRunTime,heuristicName):
 
     # time's up!
     runTime = time.time() - startTime
-    evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,(heuristicSum/heuristicCounter))
+    if heuristicCounter == 0:
+        heuristicSumOverHeuristicCounter = 0
+    else:
+        heuristicSumOverHeuristicCounter = heuristicSum / heuristicCounter
+    evaluateStats('Astar', maze, False, node, frontierPriorityQueue, exploredCounter, runTime, isHeuristic,heuristicName,heuristicSumOverHeuristicCounter)
     return False
 
 
