@@ -84,34 +84,34 @@ def runOnAll(maze, maxRunTime):
 # # ......................................................................................................................
 
 # # # ===============================================  GUI INTERFACE =====================================================
-gui = GuiInterface()
-gui.setupInterface()
+# gui = GuiInterface()
+# gui.setupInterface()
 
 # ================================================== CONSOLE INTERFACE ====================================================
 #
 #
-# # # read max time
-# print("Please enter maximum run time (seconds)")
-# maxRunTime = int(input())
-#
-# # read path to problem
-# print("Please enter path to problem file")
-# path = str(input())
-# # reading problem
-# algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
-#
+# # read max time
+print("Please enter maximum run time (seconds)")
+maxRunTime = int(input())
+
+# read path to problem
+print("Please enter path to problem file")
+path = str(input())
+# reading problem
+algorithmName, startNode, goalNode, mazeSize, maze = Utilities.readInstance(path)
+
 #
 # # #  OPTION 1 Run All Algorithms with all heuristics
 # runOnAll(maze,maxRunTime)
 
 # # OPTION 2 run as file request.
-# algorithm, isHeuristic = getAlgorithmFromString(algorithmName)
-# print("solving with "+algorithmName+", please wait...")
-# if isHeuristic is True:
-#     algorithm(maze, maxRunTime, "minimumMoves")
-# else:
-#     algorithm(maze, maxRunTime)
-#
-# print('')
-# print("PRESS ENTER TO EXIT")
-# input()
+algorithm, isHeuristic = getAlgorithmFromString(algorithmName)
+print("solving with "+algorithmName+", please wait...")
+if isHeuristic is True:
+    algorithm(maze, maxRunTime, "minimumMoves")
+else:
+    algorithm(maze, maxRunTime)
+
+print('')
+print("PRESS ENTER TO EXIT")
+input()
