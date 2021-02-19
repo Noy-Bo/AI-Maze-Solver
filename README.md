@@ -13,9 +13,12 @@ The results output is via txt file, which is generated after a run is completed 
 
 <p float="center">
   <img src="https://raw.githubusercontent.com/Noy-Bo/AI-Maze-Solver/main/readme/GUI.png" alt="alt text" width="500" height="400">
- 
-  
 </p>
+
 <p float="center">
- <img src="https://raw.githubusercontent.com/Noy-Bo/AI-Maze-Solver/main/readme/maze.png" alt="alt text" width="1000" height="400">
+ <img src="https://github.com/Noy-Bo/AI-Maze-Solver/blob/main/readme/BIASTAR.gif" alt="alt text" width="400" height="450">
+</p>
+
+<p float="center">
+ <img src="https://github.com/Noy-Bo/AI-Maze-Solver/blob/main/readme/UCS%20VS%20ASTAR.gif" alt="alt text" width="800" height="450">
 </p>
