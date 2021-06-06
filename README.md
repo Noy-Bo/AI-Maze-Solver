@@ -12,6 +12,8 @@ The results output is via txt file, which is generated after a run is completed 
 
 You are welcome to try our demo(you can find it in 'demos' folder), with mazes(you can find some in 'mazes' folder, or create your own).
 
+### Visualization
+
 <p float="center">
  <img src="https://raw.githubusercontent.com/Noy-Bo/AI-Maze-Solver/main/readme/GUI.png" alt="alt text" width="400" height="450">
  <img src="https://github.com/Noy-Bo/AI-Maze-Solver/blob/main/readme/BIASTAR.gif" alt="alt text" width="400" height="450">
